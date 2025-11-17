@@ -1,0 +1,8 @@
+# Ignore the modules you installed on Windows (we want the container to do it)
+node_modules
+
+# Ignore the Mac system file you uploaded
+.DS_Store
+
+# Ignore Git files
+.git
