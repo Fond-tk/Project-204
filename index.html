@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Quest: Code & Combat</title>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-900 text-white font-['Poppins',_sans-serif] flex flex-col h-screen overflow-hidden">
+
+    <header class="flex justify-between items-center px-6 py-3 border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-sm z-20">
+        <div class="flex items-center gap-4">
+            <img src="JS Quest Battle UI Mockup.png" alt="JS Quest Logo" class="h-8 w-8 rounded-md object-cover" />
+            <h1 class="text-xl font-bold text-cyan-400 tracking-wider">JS Quest</h1>
+        </div>
+        <!--<nav class="flex items-center gap-6 text-slate-300">
+            <a href="#" class="flex items-center gap-2 hover:text-cyan-400 transition-colors"><i data-lucide="map" class="w-5 h-5"></i><span class="hidden md:inline">World Map</span></a>
+            <a href="#" class="flex items-center gap-2 hover:text-cyan-400 transition-colors"><i data-lucide="user-circle" class="w-5 h-5"></i><span class="hidden md:inline">My Profile</span></a>
+            <a href="#" class="flex items-center gap-2 hover:text-cyan-400 transition-colors"><i data-lucide="book-marked" class="w-5 h-5"></i><span class="hidden md:inline">Achievements</span></a>
+        </nav> -->
+    </header>
+
+    <main class="flex-grow grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 overflow-auto">
+        
+        <div class="panel lg:col-span-4 flex flex-col h-full">
+            <div class="flex-shrink-0 p-4 border-b border-slate-700/50">
+                <h2 class="text-lg font-bold text-fuchsia-400 flex items-center gap-2"><i data-lucide="scroll-text" class="w-5 h-5"></i>Spellbook: Variables & First Spells</h2>
+                <p class="text-sm text-slate-400 mt-1">Your Task: Declare a constant named `spell` and assign it the magical incantation `"fireball"`. This will conjure a powerful attack to defeat the monster.</p>
+            </div>
+            <div class="flex-grow flex flex-col relative">
+                <div id="code-editor-container" class="w-full h-full p-4 bg-transparent text-base font-mono leading-relaxed resize-none focus:outline-none">
+<textarea id="code-editor" class="w-full h-full bg-transparent resize-none focus:outline-none absolute top-0 left-0 p-4 text-cyan-300" spellcheck="false">
+// A pesky Glitchelin blocks your way!
+// To defeat it, you must cast your first spell.
+
+// Task: Declare a constant named 'spell' and assign it the string "fireball".
+</textarea>
+                </div>
+            </div>
+            <div class="flex-shrink-0 p-4 border-t border-slate-700/50">
+                <button id="run-code-btn" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 transform active:scale-95 disabled:bg-slate-600 disabled:cursor-not-allowed">
+                    <i data-lucide="play-circle" class="w-6 h-6"></i>
+                    <span>Attack</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="panel lg:col-span-8 flex flex-col items-center justify-around h-full p-4 relative overflow-hidden">
+            <div id="battle-scene-bg"></div>
+
+            <div class="w-full flex justify-between items-start absolute top-4 px-8 z-10">
+                <div class="w-2/5">
+                    <h3 class="text-lg font-bold text-center mb-2">Apprentice Mage</h3>
+                    <div class="health-bar-container">
+                        <div id="player-health-bar" class="health-bar bg-green-500"></div>
+                        <span class="health-text"><span id="player-hp-text">100 / 100</span> HP</span>
+                    </div>
+                </div>
+                <div class="w-2/5">
+                    <h3 class="text-lg font-bold text-center mb-2">Glitchelin</h3>
+                    <div class="health-bar-container">
+                        <div id="enemy-health-bar" class="health-bar bg-yellow-500"></div>
+                         <span class="health-text"><span id="enemy-hp-text">100 / 100</span> HP</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="w-full flex-grow flex items-center justify-around mt-16 mb-4">
+                 <div id="player-character" class="w-40 h-40 md:w-52 md:h-52 relative" style="animation: float 4s ease-in-out infinite;">
+                    <img src="Player Character Apprentice Mage.png" alt="Apprentice Mage" class="w-full h-full object-contain drop-shadow-lg">
+                 </div>
+                 <div id="enemy-character" class="w-48 h-48 md:w-60 md:h-60 relative" style="animation: float 5s ease-in-out infinite;">
+                    <img src="Mischievous Glitch Bug Monster.png" alt="Glitchelin" class="w-full h-full object-contain drop-shadow-lg">
+                    <img id="success-attack-effect" src="Successful Code Attack Explosion.png" alt="Success Effect" class="absolute inset-0 w-full h-full object-contain hidden opacity-0" />
+                    <img id="fail-attack-effect" src="Humorous Failed Code Execution Effect.png" alt="Fail Effect" class="absolute inset-0 w-full h-full object-contain hidden opacity-0" />
+                 </div>
+            </div>
+            
+            <div class="panel-bottom lg:absolute bottom-0 left-0 right-0 h-1/3 flex flex-col">
+                <div class="flex-shrink-0 p-3 border-b border-slate-700/50">
+                    <h2 class="text-md font-bold text-amber-400 flex items-center gap-2"><i data-lucide="terminal" class="w-5 h-5"></i>Oracle's Console</h2>
+                </div>
+                <div id="console-output" class="flex-grow p-4 text-sm font-mono overflow-y-auto">
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- ใส่ก่อน main.js -->
+<script type="module">
+import { animate } from 'https://esm.run/framer-motion@11.2.10';
+window.animate = animate; // ให้ animate ใช้ใน ui_manager.js
+</script>
+<script type="module" src="main.js"></script>
+</body>
+</html>
