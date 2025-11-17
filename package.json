@@ -2,5 +2,11 @@
   "dependencies": {
     "framer-motion": "^12.23.24"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "scripts": {
+    "start": "http-server -p 3000"
+  }
 }

@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    ports:
+      # Map your Windows port 3000 to the container's port 3000
+      - "3000:3000"
+    volumes:
+      # This syncs your local folder with the container.
+      # Any code you change in index.html, main.js, etc.
+      # will be updated LIVE in the container.
+      - .:/app
+      # This prevents your local node_modules from over-writing
+      # the container's node_modules.
+      - /app/node_modules
