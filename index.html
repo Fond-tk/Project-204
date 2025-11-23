@@ -8,20 +8,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="bg-slate-900 text-white font-['Poppins',_sans-serif] flex flex-col h-screen overflow-hidden">
 
     <header class="flex justify-between items-center px-6 py-3 border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-sm z-20">
         <div class="flex items-center gap-4">
-            <img src="JS Quest Battle UI Mockup.png" alt="JS Quest Logo" class="h-8 w-8 rounded-md object-cover" />
+            <img src="assets/images/JS Quest Battle UI Mockup.png" alt="JS Quest Logo" class="h-8 w-8 rounded-md object-cover" />
             <h1 class="text-xl font-bold text-cyan-400 tracking-wider">JS Quest</h1>
         </div>
-        <!--<nav class="flex items-center gap-6 text-slate-300">
-            <a href="#" class="flex items-center gap-2 hover:text-cyan-400 transition-colors"><i data-lucide="map" class="w-5 h-5"></i><span class="hidden md:inline">World Map</span></a>
-            <a href="#" class="flex items-center gap-2 hover:text-cyan-400 transition-colors"><i data-lucide="user-circle" class="w-5 h-5"></i><span class="hidden md:inline">My Profile</span></a>
-            <a href="#" class="flex items-center gap-2 hover:text-cyan-400 transition-colors"><i data-lucide="book-marked" class="w-5 h-5"></i><span class="hidden md:inline">Achievements</span></a>
-        </nav> -->
     </header>
 
     <main class="flex-grow grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 overflow-auto">
@@ -71,12 +67,12 @@
             
             <div class="w-full flex-grow flex items-center justify-around mt-16 mb-4">
                  <div id="player-character" class="w-40 h-40 md:w-52 md:h-52 relative" style="animation: float 4s ease-in-out infinite;">
-                    <img src="Player Character Apprentice Mage.png" alt="Apprentice Mage" class="w-full h-full object-contain drop-shadow-lg">
+                    <img src="assets/images/Player Character Apprentice Mage.png" alt="Apprentice Mage" class="w-full h-full object-contain drop-shadow-lg">
                  </div>
                  <div id="enemy-character" class="w-48 h-48 md:w-60 md:h-60 relative" style="animation: float 5s ease-in-out infinite;">
-                    <img src="Mischievous Glitch Bug Monster.png" alt="Glitchelin" class="w-full h-full object-contain drop-shadow-lg">
-                    <img id="success-attack-effect" src="Successful Code Attack Explosion.png" alt="Success Effect" class="absolute inset-0 w-full h-full object-contain hidden opacity-0" />
-                    <img id="fail-attack-effect" src="Humorous Failed Code Execution Effect.png" alt="Fail Effect" class="absolute inset-0 w-full h-full object-contain hidden opacity-0" />
+                    <img src="assets/images/Mischievous Glitch Bug Monster.png" alt="Glitchelin" class="w-full h-full object-contain drop-shadow-lg">
+                    <img id="success-attack-effect" src="assets/images/Successful Code Attack Explosion.png" alt="Success Effect" class="absolute inset-0 w-full h-full object-contain hidden opacity-0" />
+                    <img id="fail-attack-effect" src="assets/images/Humorous Failed Code Execution Effect.png" alt="Fail Effect" class="absolute inset-0 w-full h-full object-contain hidden opacity-0" />
                  </div>
             </div>
             
@@ -92,11 +88,12 @@
     </main>
 
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- ใส่ก่อน main.js -->
-<script type="module">
-import { animate } from 'https://esm.run/framer-motion@11.2.10';
-window.animate = animate; // ให้ animate ใช้ใน ui_manager.js
-</script>
-<script type="module" src="main.js"></script>
+    
+    <script type="module">
+        import { animate } from 'https://esm.run/framer-motion@11.2.10';
+        window.animate = animate; 
+    </script>
+    
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>
