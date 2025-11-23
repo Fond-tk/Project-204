@@ -18,6 +18,11 @@
             <img src="src/assets/images/JS Quest Battle UI Mockup.png" alt="JS Quest Logo" class="h-8 w-8 rounded-md object-cover" />
             <h1 class="text-xl font-bold text-cyan-400 tracking-wider">JS Quest</h1>
         </div>
+         <!--<nav class="flex items-center gap-6 text-slate-300">
+            <a href="#" class="flex items-center gap-2 hover:text-cyan-400 transition-colors"><i data-lucide="map" class="w-5 h-5"></i><span class="hidden md:inline">World Map</span></a>
+            <a href="#" class="flex items-center gap-2 hover:text-cyan-400 transition-colors"><i data-lucide="user-circle" class="w-5 h-5"></i><span class="hidden md:inline">My Profile</span></a>
+            <a href="#" class="flex items-center gap-2 hover:text-cyan-400 transition-colors"><i data-lucide="book-marked" class="w-5 h-5"></i><span class="hidden md:inline">Achievements</span></a>
+        </nav> -->
     </header>
 
     <main class="flex-grow grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 overflow-auto">
@@ -88,10 +93,10 @@
     </main>
 
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+    <!-- ใส่ก่อน main.js -->
     <script type="module">
         import { animate } from 'https://esm.run/framer-motion@11.2.10';
-        window.animate = animate; 
+        window.animate = animate; // ให้ animate ใช้ใน ui_manager.js
     </script>
     
     <script type="module" src="src/js/main.js"></script>
