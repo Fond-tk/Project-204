@@ -1,4 +1,5 @@
-
+// --- FIX: Add this import line at the very top ---
+import { animate } from "https://cdn.jsdelivr.net/npm/motion@10.17.0/+esm";
 
 const elements = {
     playerHealthBar: document.getElementById('player-health-bar'),
@@ -10,8 +11,35 @@ const elements = {
     playerCharacter: document.getElementById('player-character'),
     enemyCharacter: document.getElementById('enemy-character'),
     successAttackEffect: document.getElementById('success-attack-effect'),
-    failAttackEffect: document.getElementById('fail-attack-effect')
+    failAttackEffect: document.getElementById('fail-attack-effect'),
+    // Ensure we can find the overlay you have in index.html
+    gameStatusOverlay: document.getElementById('game-status-overlay'),
+    currentTaskDesc: document.getElementById('current-task-desc'),
+    codeEditor: document.getElementById('code-editor') 
 };
+
+// --- Helper: Clear Editor ---
+export function clearCodeEditor() {
+    if (elements.codeEditor) {
+        elements.codeEditor.value = '';
+    }
+}
+
+// --- Helper: Update Task Text ---
+export function updateTaskDisplay(description) {
+    if (elements.currentTaskDesc) {
+        elements.currentTaskDesc.textContent = description;
+        animate(elements.currentTaskDesc, { scale: [1.2, 1] }, { duration: 0.3 });
+    }
+}
+
+// --- Helper: Set Character Image ---
+export function setCharacterImage(type, imagePath) {
+    const el = type === 'player' ? elements.playerCharacter : elements.enemyCharacter;
+    if (el) {
+        el.src = imagePath;
+    }
+}
 
 export function updateHealthBar(target, percentage, currentHp, maxHp) {
     const bar = target === 'player' ? elements.playerHealthBar : elements.enemyHealthBar;
@@ -36,7 +64,7 @@ export function logToConsole(message, type = 'info') {
 
     switch (type) {
         case 'success':
-            p.className = 'text-green-400';
+            p.className = 'text-green-400 font-bold';
             break;
         case 'error':
             p.className = 'text-red-400';
@@ -54,10 +82,10 @@ export function logToConsole(message, type = 'info') {
             p.className = 'text-orange-500';
             break;
         case 'victory':
-            p.className = 'text-lime-300 font-bold';
+            p.className = 'text-lime-300 font-bold text-lg';
             break;
         case 'defeat':
-            p.className = 'text-rose-500 font-bold';
+            p.className = 'text-rose-500 font-bold text-lg';
             break;
         default:
             p.className = 'text-slate-300';
@@ -67,25 +95,30 @@ export function logToConsole(message, type = 'info') {
     elements.consoleOutput.scrollTop = elements.consoleOutput.scrollHeight;
 }
 
-
 export function toggleRunButton(enabled) {
     if (elements.runCodeBtn) {
         elements.runCodeBtn.disabled = !enabled;
+        elements.runCodeBtn.style.opacity = enabled ? '1' : '0.5';
+        elements.runCodeBtn.style.cursor = enabled ? 'pointer' : 'not-allowed';
     }
 }
 
 export function animateAttack(attacker, target, resultType) {
     const targetElement = target === 'player' ? elements.playerCharacter : elements.enemyCharacter;
+    const attackerElement = attacker === 'player' ? elements.playerCharacter : elements.enemyCharacter;
 
-    if (targetElement) {
-        if (attacker === 'player') {
-            animate([
-                [elements.playerCharacter, { x: 50, scale: 1.1 }, { duration: 0.2, ease: 'easeOut' }],
-                [elements.playerCharacter, { x: 0, scale: 1 }, { duration: 0.5, ease: 'spring' }]
-            ]);
-        }
+    if (attackerElement && targetElement) {
+        // Attack Animation (Lunge)
+        const direction = attacker === 'player' ? 50 : -50;
         
+        animate(attackerElement, 
+            { x: [0, direction, 0], scale: [1, 1.1, 1] }, 
+            { duration: 0.4, ease: 'easeOut' }
+        );
+        
+        // Damage/Effect Animation
         setTimeout(() => {
+            // Optional: Show specific spell effect if you have the elements
             const effectElement = resultType === 'success' ? elements.successAttackEffect : elements.failAttackEffect;
             if (effectElement) {
                 effectElement.style.display = 'block';
@@ -93,37 +126,60 @@ export function animateAttack(attacker, target, resultType) {
                     { opacity: [1, 0] }, 
                     { 
                         duration: 0.8, 
-                        onComplete: () => {
-                            effectElement.style.display = 'none';
-                        }
+                        onComplete: () => { effectElement.style.display = 'none'; }
                     }
                 );
             }
 
-            targetElement.classList.add('attack-anim');
-            targetElement.addEventListener('animationend', () => {
-                targetElement.classList.remove('attack-anim');
-            }, { once: true });
+            // Target Shake & Flash Red (only on damage)
+            targetElement.classList.add('shake'); // Make sure you have .shake css
+            
+            if(resultType !== 'success' || target === 'enemy') {
+                 animate(targetElement, { filter: ["brightness(1)", "brightness(2) sepia(1) hue-rotate(-50deg)", "brightness(1)"] }, { duration: 0.3 });
+            }
+
+            setTimeout(() => targetElement.classList.remove('shake'), 500);
         }, 200);
     }
 }
 
 export function showGameStatus(message) {
-    const statusDiv = document.createElement('div');
-    statusDiv.textContent = message;
-    statusDiv.className = 'absolute inset-0 flex items-center justify-center text-6xl font-bold z-10 text-white';
-    statusDiv.style.textShadow = '0 0 20px #000';
-    statusDiv.style.backgroundColor = 'rgba(0,0,0,0.5)';
+    // Check if overlay already exists in DOM (it should from index.html)
+    let statusDiv = document.getElementById('game-status-overlay');
     
-    if(message === "You Win!") {
-        statusDiv.style.color = '#22d3ee'; // สี Victory
-        // Animation ตอน Victory
-        statusDiv.style.animation = 'victory-anim 1s ease-out forwards';
-    } else {
-        statusDiv.style.color = '#f43f5e'; // สี Defeat
-        statusDiv.style.animation = 'defeat-anim 1s ease-out forwards';
+    // Fallback if not found
+    if (!statusDiv) {
+        statusDiv = document.createElement('div');
+        statusDiv.id = 'game-status-overlay';
+        statusDiv.className = 'absolute inset-0 flex flex-col items-center justify-center z-50 bg-slate-900/90 backdrop-blur-sm';
+        document.body.appendChild(statusDiv);
     }
 
-    document.querySelector('.lg\\:col-span-8.panel').appendChild(statusDiv);
-}
+    // Reset content
+    statusDiv.innerHTML = ''; 
+    statusDiv.classList.remove('hidden');
 
+    const title = document.createElement('h2');
+    title.textContent = message;
+    title.className = 'text-6xl font-bold mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]';
+    
+    const subtext = document.createElement('p');
+    subtext.className = 'text-xl text-slate-300 mb-8';
+
+    if(message === "You Win!") {
+        title.style.color = '#22d3ee'; 
+        subtext.textContent = "You fixed the glitch!";
+    } else {
+        title.style.color = '#f43f5e'; 
+        subtext.textContent = "The system crashed...";
+    }
+    
+    const reloadBtn = document.createElement('button');
+    reloadBtn.textContent = "Play Again";
+    reloadBtn.className = "px-8 py-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg font-bold transition-all shadow-lg hover:shadow-cyan-500/50";
+    reloadBtn.onclick = () => location.reload();
+
+    statusDiv.appendChild(title);
+    statusDiv.appendChild(subtext);
+    statusDiv.appendChild(reloadBtn);
+}

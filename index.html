@@ -4,101 +4,134 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JS Quest: Code & Combat</title>
+    
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <link rel="stylesheet" href="src/css/style.css">
 </head>
-<body class="bg-slate-900 text-white font-['Poppins',_sans-serif] flex flex-col h-screen overflow-hidden">
+<body class="h-screen w-screen overflow-hidden text-white flex flex-col">
 
-    <header class="flex justify-between items-center px-6 py-3 border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-sm z-20">
+    <header class="flex justify-between items-center px-6 py-3 border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-sm z-20 shrink-0">
         <div class="flex items-center gap-4">
-            <img src="src/assets/images/JS Quest Battle UI Mockup.png" alt="JS Quest Logo" class="h-8 w-8 rounded-md object-cover" />
+            <div class="h-10 w-10 bg-cyan-900/50 rounded-lg flex items-center justify-center border border-cyan-500/30">
+                <i data-lucide="sword" class="text-cyan-400 w-6 h-6"></i>
+            </div>
             <h1 class="text-xl font-bold text-cyan-400 tracking-wider">JS Quest</h1>
         </div>
-         <!--<nav class="flex items-center gap-6 text-slate-300">
-            <a href="#" class="flex items-center gap-2 hover:text-cyan-400 transition-colors"><i data-lucide="map" class="w-5 h-5"></i><span class="hidden md:inline">World Map</span></a>
-            <a href="#" class="flex items-center gap-2 hover:text-cyan-400 transition-colors"><i data-lucide="user-circle" class="w-5 h-5"></i><span class="hidden md:inline">My Profile</span></a>
-            <a href="#" class="flex items-center gap-2 hover:text-cyan-400 transition-colors"><i data-lucide="book-marked" class="w-5 h-5"></i><span class="hidden md:inline">Achievements</span></a>
-        </nav> -->
+        <div class="flex items-center gap-4">
+            <div class="px-4 py-1 bg-slate-800 rounded-full border border-slate-700 text-sm text-slate-300">
+                Level <span id="level-indicator" class="text-amber-400 font-bold">1</span>
+            </div>
+            <button onclick="window.location.reload()" class="p-2 hover:bg-slate-800 rounded-full transition-colors" title="Restart Game">
+                <i data-lucide="refresh-cw" class="w-5 h-5 text-slate-400"></i>
+            </button>
+        </div>
     </header>
 
-    <main class="flex-grow grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 overflow-auto">
+    <main class="flex-grow flex flex-col lg:flex-row p-4 gap-4 overflow-hidden relative">
         
-        <div class="panel lg:col-span-4 flex flex-col h-full">
-            <div class="flex-shrink-0 p-4 border-b border-slate-700/50">
-                <h2 class="text-lg font-bold text-fuchsia-400 flex items-center gap-2"><i data-lucide="scroll-text" class="w-5 h-5"></i>Spellbook: Variables & First Spells</h2>
-                <p class="text-sm text-slate-400 mt-1">Your Task: Declare a constant named `spell` and assign it the magical incantation `"fireball"`. This will conjure a powerful attack to defeat the monster.</p>
-            </div>
-            <div class="flex-grow flex flex-col relative">
-                <div id="code-editor-container" class="w-full h-full p-4 bg-transparent text-base font-mono leading-relaxed resize-none focus:outline-none">
-<textarea id="code-editor" class="w-full h-full bg-transparent resize-none focus:outline-none absolute top-0 left-0 p-4 text-cyan-300" spellcheck="false">
-// A pesky Glitchelin blocks your way!
-// To defeat it, you must cast your first spell.
+        <div class="absolute inset-0 z-0 pointer-events-none opacity-30">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
+        </div>
 
-// Task: Declare a constant named 'spell' and assign it the string "fireball".
-</textarea>
+        <div class="panel glass-panel h-full lg:w-1/3 flex flex-col relative z-10 overflow-hidden">
+            
+            <div class="flex-grow flex flex-col h-2/3 border-b border-slate-700/50">
+                <div class="flex justify-between items-center p-3 bg-slate-800/50 border-b border-slate-700/50">
+                    <h2 class="text-sm font-bold text-cyan-400 flex items-center gap-2">
+                        <i data-lucide="code-2" class="w-4 h-4"></i> Spellbook (Code Editor)
+                    </h2>
+                    <span class="text-xs text-slate-400">Javascript Mode</span>
+                </div>
+                <div class="relative flex-grow">
+                    <textarea id="code-editor" class="w-full h-full p-4 text-sm font-mono focus:ring-0 border-none bg-slate-950/50" 
+                    placeholder="// Type your spell code here..." spellcheck="false"></textarea>
+                </div>
+                <div class="p-3 bg-slate-800/50 border-t border-slate-700/50 flex justify-end">
+                    <button id="run-code-btn" class="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold rounded-lg shadow-lg shadow-cyan-900/50 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i data-lucide="play" class="w-4 h-4 fill-current"></i> Cast Spell
+                    </button>
                 </div>
             </div>
-            <div class="flex-shrink-0 p-4 border-t border-slate-700/50">
-                <button id="run-code-btn" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 transform active:scale-95 disabled:bg-slate-600 disabled:cursor-not-allowed">
-                    <i data-lucide="play-circle" class="w-6 h-6"></i>
-                    <span>Attack</span>
+
+            <div class="h-1/3 flex flex-col bg-black/40">
+                <div class="flex-shrink-0 p-3 border-b border-slate-700/50 flex justify-between items-center bg-slate-800/80">
+                    <h2 class="text-xs font-bold text-amber-400 flex items-center gap-2 uppercase tracking-widest">
+                        <i data-lucide="terminal" class="w-4 h-4"></i> Console
+                    </h2>
+                    <button id="clear-console-btn" class="text-xs text-slate-500 hover:text-slate-300 transition-colors" title="Clear Console">
+                        <i data-lucide="trash-2" class="w-3 h-3"></i>
+                    </button>
+                </div>
+                <div id="console-output" class="flex-grow p-4 text-xs font-mono overflow-y-auto space-y-2">
+                    </div>
+            </div>
+        </div>
+
+        <div class="panel glass-panel h-full lg:w-2/3 flex flex-col relative z-10 overflow-hidden">
+            
+            <div class="absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-20">
+                
+                <div class="w-64">
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="font-bold text-cyan-400">Wizard (You)</span>
+                        <span id="player-hp-text" class="text-slate-300">100 / 100</span>
+                    </div>
+                    <div class="h-3 bg-slate-900 rounded-full overflow-hidden border border-slate-700">
+                        <div id="player-health-bar" class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 w-full transition-all duration-500"></div>
+                    </div>
+                </div>
+
+                <div class="absolute top-20 left-1/2 transform -translate-x-1/2 bg-slate-900/90 border border-amber-500/50 p-4 rounded-xl shadow-xl max-w-md text-center animate-bounce-slow">
+                    <h3 class="text-amber-400 text-sm font-bold mb-1 uppercase tracking-wider">Current Objective</h3>
+                    <p id="current-task-desc" class="text-white text-sm">Loading task...</p>
+                </div>
+
+                <div class="w-64">
+                    <div class="flex justify-between text-sm mb-1">
+                        <span id="enemy-hp-text" class="text-slate-300">100 / 100</span>
+                        <span class="font-bold text-fuchsia-400">Glitchelin</span>
+                    </div>
+                    <div class="h-3 bg-slate-900 rounded-full overflow-hidden border border-slate-700">
+                        <div id="enemy-health-bar" class="h-full bg-gradient-to-r from-fuchsia-500 to-purple-500 w-full transition-all duration-500"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-grow flex items-end justify-between px-16 pb-16 relative">
+    
+    <img id="player-character" 
+         src="src/assets/images/Player.png" 
+         alt="Wizard"
+         class="w-48 h-48 object-contain relative z-10 filter drop-shadow-[0_0_20px_rgba(34,211,238,0.4)] animate-float">
+
+    <div id="effects-layer" class="absolute inset-0 pointer-events-none flex items-center justify-center z-20"></div>
+
+    <img id="enemy-character" 
+         src="src/assets/images/Glitchlin.png" 
+         alt="Enemy"
+         class="w-48 h-48 object-contain relative z-10 animate-float filter drop-shadow-[0_0_30px_rgba(168,85,247,0.4)]">
+
+</div>
+            
+            <div id="game-status-overlay" class="hidden absolute inset-0 bg-slate-900/90 z-50 flex flex-col items-center justify-center p-8 text-center backdrop-blur-sm">
+                <h2 id="game-status-title" class="text-6xl font-bold mb-4 text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">VICTORY</h2>
+                <p id="game-status-msg" class="text-xl text-slate-300 mb-8">You fixed the glitch!</p>
+                <button onclick="location.reload()" class="px-8 py-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg font-bold transition-all shadow-lg hover:shadow-cyan-500/50">
+                    Play Again
                 </button>
             </div>
+
         </div>
-
-        <div class="panel lg:col-span-8 flex flex-col items-center justify-around h-full p-4 relative overflow-hidden">
-            <div id="battle-scene-bg"></div>
-
-            <div class="w-full flex justify-between items-start absolute top-4 px-8 z-10">
-                <div class="w-2/5">
-                    <h3 class="text-lg font-bold text-center mb-2">Apprentice Mage</h3>
-                    <div class="health-bar-container">
-                        <div id="player-health-bar" class="health-bar bg-green-500"></div>
-                        <span class="health-text"><span id="player-hp-text">100 / 100</span> HP</span>
-                    </div>
-                </div>
-                <div class="w-2/5">
-                    <h3 class="text-lg font-bold text-center mb-2">Glitchelin</h3>
-                    <div class="health-bar-container">
-                        <div id="enemy-health-bar" class="health-bar bg-yellow-500"></div>
-                         <span class="health-text"><span id="enemy-hp-text">100 / 100</span> HP</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="w-full flex-grow flex items-center justify-around mt-16 mb-4">
-                 <div id="player-character" class="w-40 h-40 md:w-52 md:h-52 relative" style="animation: float 4s ease-in-out infinite;">
-                    <img src="src/assets/images/Player Character Apprentice Mage.png" alt="Apprentice Mage" class="w-full h-full object-contain drop-shadow-lg">
-                 </div>
-                 <div id="enemy-character" class="w-48 h-48 md:w-60 md:h-60 relative" style="animation: float 5s ease-in-out infinite;">
-                    <img src="src/assets/images/Mischievous Glitch Bug Monster.png" alt="Glitchelin" class="w-full h-full object-contain drop-shadow-lg">
-                    <img id="success-attack-effect" src="src/assets/images/Successful Code Attack Explosion.png" alt="Success Effect" class="absolute inset-0 w-full h-full object-contain hidden opacity-0" />
-                    <img id="fail-attack-effect" src="src/assets/images/Humorous Failed Code Execution Effect.png" alt="Fail Effect" class="absolute inset-0 w-full h-full object-contain hidden opacity-0" />
-                 </div>
-            </div>
-            
-            <div class="panel-bottom lg:absolute bottom-0 left-0 right-0 h-1/3 flex flex-col">
-                <div class="flex-shrink-0 p-3 border-b border-slate-700/50">
-                    <h2 class="text-md font-bold text-amber-400 flex items-center gap-2"><i data-lucide="terminal" class="w-5 h-5"></i>Oracle's Console</h2>
-                </div>
-                <div id="console-output" class="flex-grow p-4 text-sm font-mono overflow-y-auto">
-                </div>
-            </div>
-        </div>
-
     </main>
 
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- ใส่ก่อน main.js -->
-    <script type="module">
-        import { animate } from 'https://esm.run/framer-motion@11.2.10';
-        window.animate = animate; // ให้ animate ใช้ใน ui_manager.js
-    </script>
-    
     <script type="module" src="src/js/main.js"></script>
 </body>
 </html>

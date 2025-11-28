@@ -3,7 +3,10 @@ import {
     logToConsole,
     toggleRunButton,
     animateAttack,
-    showGameStatus
+    showGameStatus,
+    updateTaskDisplay,
+    setCharacterImage,
+    clearCodeEditor
 } from './ui_manager.js';
 
 let gameState = {
@@ -13,63 +16,56 @@ let gameState = {
     gameOver: false,
 };
 
-// ---------------------------
-// Progressive JS Learning Tasks (5 ด่าน)
-// ---------------------------
 const spellTasks = [
     { desc: 'Declare a variable spell with value "fireball"', codeCheck: /const\s+spell\s*=\s*['"]fireball['"]/ },
     { desc: 'Create let damage = 10 + 5', codeCheck: /let\s+damage\s*=\s*10\s*\+\s*5/ },
-    { desc: 'Create array spells with ["fireball","iceblast"]', codeCheck: /const\s+spells\s*=\s*\[\s*['"]fireball['"],\s*['"]iceblast['"]\s*\]/ },
+    { desc: 'Create array spells with ["fireball","iceblast"]', codeCheck: /const\s+spells\s*=\s*\[\s*['"]fireball['"]\s*,\s*['"]iceblast['"]\s*\]/ },
     { desc: 'Create function cast(spell) returning spell+"!"', codeCheck: /function\s+cast\s*\(\s*spell\s*\)\s*{[^}]+}/ },
-    { desc: 'Write for loop 0 to 2', codeCheck: /for\s*\(\s*let\s+i\s*=\s*0;\s*i\s*<\s*3;\s*i\+\+\)/ }
+    { desc: 'Write for loop 0 to 2', codeCheck: /for\s*\(\s*let\s+i\s*=\s*0\s*;\s*i\s*<\s*3\s*;/ }
 ];
 
 let currentTaskIndex = 0;
 
-// ---------------------------
-// Initialize Game
-// ---------------------------
 export function initGameState() {
+    // Reset State
     gameState.player.currentHp = gameState.player.maxHp;
     gameState.enemy.currentHp = gameState.enemy.maxHp;
     gameState.isPlayerTurn = true;
     gameState.gameOver = false;
+    currentTaskIndex = 0; // Always start at 0
 
+    // Reset UI
     updateHealthBar('player', 100, gameState.player.currentHp, gameState.player.maxHp);
     updateHealthBar('enemy', 100, gameState.enemy.currentHp, gameState.enemy.maxHp);
 
     logToConsole("Welcome to JS Quest!", 'system');
     logToConsole("A pesky Glitchelin blocks your path!", 'enemy');
 
-    // แสดงโจทย์แรก
-    currentTaskIndex = 0;
+    // Show Task 1
+    updateTaskDisplay(spellTasks[currentTaskIndex].desc); 
     logToConsole(`Current task: ${spellTasks[currentTaskIndex].desc}`, 'info');
+
+    // Set Images
+    setCharacterImage('player', 'src/assets/images/Player.png');
+    setCharacterImage('enemy', 'src/assets/images/Glitchlin.png');
 
     toggleRunButton(true);
 }
 
-// ---------------------------
-// Check Code Function
-// ---------------------------
 function checkCode(code) {
     const task = spellTasks[currentTaskIndex];
 
     if(task.codeCheck.test(code.trim())) {
         return { success: true, damage: 20, message: `Correct! ${task.desc}` };
     } else {
-        // Hint
         let hint;
         if (!/const|let|function|for/.test(code)) hint = "Check your keyword (const, let, function, for).";
-        else if (!code.includes(task.desc.split('"')[1])) hint = `Check the value or variable name. It should match "${task.desc.split('"')[1]}"`;
-        else hint = "Check your syntax carefully.";
+        else hint = "Check your syntax or variable names carefully.";
 
         return { success: false, damage: 10, message: `Incorrect. Hint: ${hint}` };
     }
 }
 
-// ---------------------------
-// Handle Player Turn
-// ---------------------------
 export function handlePlayerTurn(userCode) {
     if (!gameState.isPlayerTurn || gameState.gameOver) return;
 
@@ -81,22 +77,25 @@ export function handlePlayerTurn(userCode) {
 
     setTimeout(() => {
         if(result.success) {
-            // ลด HP ศัตรู
+            // Player Success
             gameState.enemy.currentHp = Math.max(0, gameState.enemy.currentHp - result.damage);
             const enemyHpPercent = (gameState.enemy.currentHp / gameState.enemy.maxHp) * 100;
             updateHealthBar('enemy', enemyHpPercent, gameState.enemy.currentHp, gameState.enemy.maxHp);
 
             logToConsole(result.message, 'success');
             animateAttack('player', 'enemy', 'success');
+            
+            clearCodeEditor();
 
-            // ด่านต่อไป
+            // Next Level Logic (No Save)
             currentTaskIndex++;
             if(currentTaskIndex < spellTasks.length) {
-                logToConsole(`Next task: ${spellTasks[currentTaskIndex].desc}`, 'info');
+                updateTaskDisplay(spellTasks[currentTaskIndex].desc);
+                setTimeout(() => logToConsole(`Next task: ${spellTasks[currentTaskIndex].desc}`, 'info'), 1000);
             }
 
         } else {
-            // โค้ดผิด → ผู้เล่นโดนดาเมจ
+            // Player Fail
             gameState.player.currentHp = Math.max(0, gameState.player.currentHp - result.damage);
             const playerHpPercent = (gameState.player.currentHp / gameState.player.maxHp) * 100;
             updateHealthBar('player', playerHpPercent, gameState.player.currentHp, gameState.player.maxHp);
@@ -106,20 +105,20 @@ export function handlePlayerTurn(userCode) {
             logToConsole(`Your spell fizzles! You take ${result.damage} damage.`, 'damage');
         }
 
-        // ตรวจ Win / Lose
+        // Check Win/Lose
         if(checkWinCondition()) return;
 
+        // Reset Turn
         setTimeout(() => {
-            gameState.isPlayerTurn = true;
-            toggleRunButton(true);
+            if(!gameState.gameOver) {
+                gameState.isPlayerTurn = true;
+                toggleRunButton(true);
+            }
         }, 1500);
 
     }, 500);
 }
 
-// ---------------------------
-// Check Win / Lose
-// ---------------------------
 function checkWinCondition() {
     if(gameState.enemy.currentHp <= 0) {
         logToConsole("VICTORY! You defeated the Glitchelin!", 'victory');
