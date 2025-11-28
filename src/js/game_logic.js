@@ -18,131 +18,134 @@ let gameState = {
     gameOver: false,
 };
 
+// ---------------------------------------------------------
+// REWRITTEN OBJECTIVES
+// ---------------------------------------------------------
 const spellTasks = [
-    // --- BOSS 1: GOBLIN CAMP ---
+    // --- BOSS 1: GOBLIN CAMP (Variables) ---
     { 
         story: "Elara enters Whisperwood Forest. A bandit camp guarded by Goblins blocks the path!",
-        desc: 'Declare a constant variable "hero" with value "Elara"', 
+        desc: 'Define a constant named "hero" with the value "Elara".', 
         hint: 'const hero = "Elara"',
         codeCheck: /const\s+hero\s*=\s*['"]Elara['"]/ 
     },
     { 
         story: "She spots rare herbs nearby, but needs to count them quickly before the Goblins notice.",
-        desc: 'Create a variable "herbs" equal to 5', 
+        desc: 'Store the number 5 in a variable named "herbs".', 
         hint: 'let herbs = 5',
         codeCheck: /let\s+herbs\s*=\s*5/ 
     },
     { 
         story: "The Goblins attack! Elara prepares her signature spell.",
-        desc: 'Declare a constant "spell" with value "Fireball"', 
+        desc: 'Prepare "Fireball" as your constant spell.', 
         hint: 'const spell = "Fireball"',
         codeCheck: /const\s+spell\s*=\s*['"]Fireball['"]/ 
     },
     { 
         story: "The Goblin Captain charges. Elara needs to calculate double damage!",
-        desc: 'Create variable "attack" that equals 10 * 2', 
+        desc: 'Calculate "attack": multiply base 10 by 2.', 
         hint: 'let attack = 10 * 2',
         codeCheck: /let\s+attack\s*=\s*10\s*\*\s*2/ 
     },
     { 
         story: "Blades fly everywhere! Elara raises a magical ward.",
-        desc: 'Create a constant "hasShield" set to true', 
+        desc: 'Activate "hasShield" by setting it to true.', 
         hint: 'const hasShield = true',
         codeCheck: /const\s+hasShield\s*=\s*true/ 
     },
 
-    // --- BOSS 2: CYCLOPS LABYRINTH ---
+    // --- BOSS 2: CYCLOPS LABYRINTH (Conditionals) ---
     { 
         story: "Elara reaches the Stone Archway. A massive Cyclops blocks the labyrinth entrance.",
-        desc: 'Check if heroPower > 10', 
+        desc: 'Check if "heroPower" is greater than 10.', 
         hint: 'heroPower > 10',
         codeCheck: /heroPower\s*>\s*10/ 
     },
     { 
         story: "The Cyclops smashes the ground! She must check if the path is clear.",
-        desc: 'Write: if (path === "clear") { move() }', 
+        desc: 'If "path" equals "clear", execute move().', 
         hint: 'if (path === "clear") { move() }',
         codeCheck: /if\s*\(\s*path\s*===\s*['"]clear['"]\s*\)\s*\{\s*move\(\)\s*\}/ 
     },
     { 
         story: "A massive club swing! She needs to run AND dodge.",
-        desc: 'Write the logic: run && dodge', 
+        desc: 'Write the logic for: run AND dodge.', 
         hint: 'run && dodge',
         codeCheck: /run\s*&&\s*dodge/ 
     },
     { 
         story: "The Cyclops is tired. Aim for the head OR the legs.",
-        desc: 'Write the logic: aimHead || aimLegs', 
+        desc: 'Write the logic for: aimHead OR aimLegs.', 
         hint: 'aimHead || aimLegs',
         codeCheck: /aimHead\s*\|\|\s*aimLegs/ 
     },
     { 
         story: "The Giant stumbles! Finish him or hide?",
-        desc: 'Use ternary: const action = energy > 0 ? "strike" : "hide"', 
+        desc: 'Use a ternary: if energy > 0 "strike", else "hide".', 
         hint: 'const action = energy > 0 ? "strike" : "hide"',
         codeCheck: /const\s+action\s*=\s*energy\s*>\s*0\s*\?\s*['"]strike['"]\s*:\s*['"]hide['"]/ 
     },
 
-    // --- BOSS 3: BAT CAVERNS ---
+    // --- BOSS 3: BAT CAVERNS (Arrays & Loops) ---
     { 
         story: "Victory! But now screeching fills the air. The Bat Caverns...",
-        desc: 'Create an array "bats" with values ["bat1", "bat2"]', 
+        desc: 'List "bat1" and "bat2" inside a "bats" array.', 
         hint: 'const bats = ["bat1", "bat2"]',
         codeCheck: /const\s+bats\s*=\s*\[\s*['"]bat1['"]\s*,\s*['"]bat2['"]\s*\]/ 
     },
     { 
         story: "They are swarming! Elara needs Wind magic in her spell list.",
-        desc: 'Add "Wind" to the spells array using .push()', 
+        desc: 'Push the "Wind" spell into your array.', 
         hint: 'spells.push("Wind")',
         codeCheck: /spells\.push\(\s*['"]Wind['"]\s*\)/ 
     },
     { 
         story: "It's too dark. How many are there?",
-        desc: 'Get the number of bats using .length', 
+        desc: 'Find the total number (.length) of bats.', 
         hint: 'bats.length',
         codeCheck: /bats\.length/ 
     },
     { 
         story: "She must attack them all at once!",
-        desc: 'Write a loop: for(let i=0; i<5; i++) { attack() }', 
+        desc: 'Create a loop that runs 5 times.', 
         hint: 'for(let i=0; i<5; i++) { attack() }',
         codeCheck: /for\s*\(\s*let\s+i\s*=\s*0\s*;\s*i\s*<\s*5\s*;\s*i\+\+\s*\)\s*\{\s*attack\(\)\s*\}/ 
     },
     { 
         story: "The Alpha Bat remains. Target the first one in the list.",
-        desc: 'Access the first bat: bats[0]', 
+        desc: 'Access the first element of the "bats" array.', 
         hint: 'bats[0]',
         codeCheck: /bats\[\s*0\s*\]/ 
     },
 
-    // --- BOSS 4: DRAGON'S LAIR ---
+    // --- BOSS 4: DRAGON'S LAIR (Functions & Objects) ---
     { 
         story: "The Obsidian Spikes. Drakkonis Rex, the Dragon, descends!",
-        desc: 'Create an object: const dragon = { name: "Drakkonis" }', 
+        desc: 'Define a "dragon" object with a "name" property.', 
         hint: 'const dragon = { name: "Drakkonis" }',
         codeCheck: /const\s+dragon\s*=\s*\{\s*name\s*:\s*['"]Drakkonis['"]\s*\}/ 
     },
     { 
         story: "He breathes fire! Cast a protective ward function.",
-        desc: 'Write: function cast() { return "fire" }', 
+        desc: 'Write a "cast" function that returns "fire".', 
         hint: 'function cast() { return "fire" }',
         codeCheck: /function\s+cast\s*\(\s*\)\s*\{\s*return\s*['"]fire['"]\s*\}/ 
     },
     { 
         story: "The Dragon prepares a breath attack. Analyze its property.",
-        desc: 'Set dragon.breath = "fire"', 
+        desc: 'Assign "fire" to the dragon.breath property.', 
         hint: 'dragon.breath = "fire"',
         codeCheck: /dragon\.breath\s*=\s*['"]fire['"]/ 
     },
     { 
         story: "Mid-air combat! Morph fireball into Ice Spear.",
-        desc: 'Create arrow function: const iceSpear = (target) => "frozen"', 
+        desc: 'Create an arrow function "iceSpear" returning "frozen".', 
         hint: 'const iceSpear = (target) => "frozen"',
         codeCheck: /const\s+iceSpear\s*=\s*\(\s*target\s*\)\s*=>\s*['"]frozen['"]/ 
     },
     { 
         story: "The Final Blow! Combine all elements!",
-        desc: 'Write: function win() { return true }', 
+        desc: 'Define a "win" function that returns true.', 
         hint: 'function win() { return true }',
         codeCheck: /function\s+win\s*\(\s*\)\s*\{\s*return\s*true\s*\}/ 
     }
@@ -236,7 +239,7 @@ function checkCode(code) {
         let hint;
         if (!/const|let|function|for|if/.test(code)) hint = "Check your keywords (const, let, if, for).";
         else hint = "Check your syntax carefully.";
-        return { success: false, damage: 10, message: `Incorrect. Hint: ${hint}` };
+        return { success: false, damage: 10, message: `Incorrect. Hint: ${task.hint}` };
     }
 }
 
