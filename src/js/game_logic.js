@@ -6,7 +6,8 @@ import {
     showGameStatus,
     updateTaskDisplay,
     setCharacterImage,
-    clearCodeEditor
+    clearCodeEditor,
+    animateDamage // <--- IMPORTANT: Ensure this is imported
 } from './ui_manager.js';
 
 let gameState = {
@@ -27,25 +28,17 @@ const spellTasks = [
 let currentTaskIndex = 0;
 const SAVE_KEY = 'js_quest_save_v1';
 
-// --- NEW: Save Function ---
 function saveGame() {
-    const data = {
-        level: currentTaskIndex
-        // We only save the level, so players start with full HP on reload (prevents getting stuck)
-    };
+    const data = { level: currentTaskIndex };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
     console.log("Game Saved:", data);
 }
 
-// --- NEW: Load Function (With Safety Check) ---
 function loadGame() {
     try {
         const rawData = localStorage.getItem(SAVE_KEY);
         if (!rawData) return;
-
         const data = JSON.parse(rawData);
-
-        // Safety Check: Is the level a valid number?
         if (typeof data.level === 'number' && data.level < spellTasks.length) {
             currentTaskIndex = data.level;
             logToConsole(`Save file found. Resuming Level ${currentTaskIndex + 1}...`, 'system');
@@ -54,34 +47,28 @@ function loadGame() {
         }
     } catch (error) {
         console.error("Save file corrupted. Resetting save.", error);
-        localStorage.removeItem(SAVE_KEY); // Delete bad file
+        localStorage.removeItem(SAVE_KEY);
     }
 }
 
-// --- NEW: Reset Function ---
 export function resetGameProgress() {
     localStorage.removeItem(SAVE_KEY);
     location.reload();
 }
 
 export function initGameState() {
-    // 1. Reset generic state
     gameState.player.currentHp = gameState.player.maxHp;
     gameState.enemy.currentHp = gameState.enemy.maxHp;
     gameState.isPlayerTurn = true;
     gameState.gameOver = false;
     currentTaskIndex = 0; 
 
-    // 2. Try to Load
     loadGame();
 
-    // 3. Update UI based on loaded data
     updateHealthBar('player', 100, gameState.player.currentHp, gameState.player.maxHp);
     updateHealthBar('enemy', 100, gameState.enemy.currentHp, gameState.enemy.maxHp);
-
     logToConsole("Welcome to JS Quest!", 'system');
     
-    // Show correct task based on loaded level
     if (currentTaskIndex < spellTasks.length) {
         updateTaskDisplay(spellTasks[currentTaskIndex].desc); 
         logToConsole(`Current task: ${spellTasks[currentTaskIndex].desc}`, 'info');
@@ -89,7 +76,6 @@ export function initGameState() {
 
     setCharacterImage('player', 'src/assets/images/Player.png');
     setCharacterImage('enemy', 'src/assets/images/Glitchlin.png');
-
     toggleRunButton(true);
 }
 
@@ -125,12 +111,9 @@ export function handlePlayerTurn(userCode) {
             animateAttack('player', 'enemy', 'success');
             clearCodeEditor();
 
-            // Next Level & Save
             currentTaskIndex++;
             if(currentTaskIndex < spellTasks.length) {
-                
-                saveGame(); // <--- AUTO SAVE HERE
-
+                saveGame();
                 updateTaskDisplay(spellTasks[currentTaskIndex].desc);
                 setTimeout(() => logToConsole(`Next task: ${spellTasks[currentTaskIndex].desc}`, 'info'), 1000);
             }
@@ -142,7 +125,10 @@ export function handlePlayerTurn(userCode) {
             updateHealthBar('player', playerHpPercent, gameState.player.currentHp, gameState.player.maxHp);
 
             logToConsole(result.message, 'error');
-            animateAttack('player', 'enemy', 'fail');
+            
+            // --- FIX IS HERE: Use animateDamage on PLAYER ---
+            animateDamage('player'); 
+            
             logToConsole(`Your spell fizzles! You take ${result.damage} damage.`, 'damage');
         }
 
@@ -164,11 +150,8 @@ function checkWinCondition() {
         showGameStatus('You Win!');
         gameState.gameOver = true;
         toggleRunButton(false);
-        // Clear save on win so they can restart fresh next time? 
-        // Or keep it to show they won. Let's keep it for now.
         return true;
     }
-
     if(gameState.player.currentHp <= 0) {
         logToConsole("DEFEAT... The Glitchelin defeated you.", 'defeat');
         showGameStatus('Game Over');
@@ -176,6 +159,5 @@ function checkWinCondition() {
         toggleRunButton(false);
         return true;
     }
-
     return false;
 }
