@@ -13,8 +13,18 @@ const elements = {
     failAttackEffect: document.getElementById('fail-attack-effect'),
     gameStatusOverlay: document.getElementById('game-status-overlay'),
     currentTaskDesc: document.getElementById('current-task-desc'),
-    codeEditor: document.getElementById('code-editor') 
+    codeEditor: document.getElementById('code-editor'),
+    // --- NEW: Select the Level Indicator ---
+    levelIndicator: document.getElementById('level-indicator') 
 };
+
+// --- NEW: Function to update the Level Badge ---
+export function updateLevelDisplay(stageNumber) {
+    if (elements.levelIndicator) {
+        // Displays as "1-1", "1-2", etc.
+        elements.levelIndicator.textContent = `1-${stageNumber}`;
+    }
+}
 
 export function clearCodeEditor() {
     if (elements.codeEditor) elements.codeEditor.value = '';
@@ -77,11 +87,9 @@ export function animateAttack(attacker, target, resultType) {
     const attackerElement = attacker === 'player' ? elements.playerCharacter : elements.enemyCharacter;
 
     if (attackerElement && targetElement) {
-        // Lunge forward
         const direction = attacker === 'player' ? 50 : -50;
         animate(attackerElement, { x: [0, direction, 0], scale: [1, 1.1, 1] }, { duration: 0.4, ease: 'easeOut' });
         
-        // Impact
         setTimeout(() => {
             const effectElement = resultType === 'success' ? elements.successAttackEffect : elements.failAttackEffect;
             if (effectElement) {
@@ -89,7 +97,6 @@ export function animateAttack(attacker, target, resultType) {
                 animate(effectElement, { opacity: [1, 0] }, { duration: 0.8, onComplete: () => { effectElement.style.display = 'none'; }});
             }
 
-            // ONLY shake target if success
             if(resultType === 'success') {
                 targetElement.classList.add('shake');
                 animate(targetElement, { filter: ["brightness(1)", "brightness(2) sepia(1) hue-rotate(-50deg)", "brightness(1)"] }, { duration: 0.3 });
@@ -99,12 +106,10 @@ export function animateAttack(attacker, target, resultType) {
     }
 }
 
-// --- NEW FUNCTION: Only shakes the target (no attacker movement) ---
 export function animateDamage(target) {
     const el = target === 'player' ? elements.playerCharacter : elements.enemyCharacter;
     if (el) {
         el.classList.add('shake');
-        // Flash Red
         animate(el, { 
             filter: ["brightness(1)", "brightness(2) sepia(1) hue-rotate(-50deg)", "brightness(1)"] 
         }, { duration: 0.3 });
