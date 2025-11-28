@@ -25,27 +25,68 @@ const spellTasks = [
 ];
 
 let currentTaskIndex = 0;
+const SAVE_KEY = 'js_quest_save_v1';
+
+// --- NEW: Save Function ---
+function saveGame() {
+    const data = {
+        level: currentTaskIndex
+        // We only save the level, so players start with full HP on reload (prevents getting stuck)
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+    console.log("Game Saved:", data);
+}
+
+// --- NEW: Load Function (With Safety Check) ---
+function loadGame() {
+    try {
+        const rawData = localStorage.getItem(SAVE_KEY);
+        if (!rawData) return;
+
+        const data = JSON.parse(rawData);
+
+        // Safety Check: Is the level a valid number?
+        if (typeof data.level === 'number' && data.level < spellTasks.length) {
+            currentTaskIndex = data.level;
+            logToConsole(`Save file found. Resuming Level ${currentTaskIndex + 1}...`, 'system');
+        } else {
+            console.warn("Save file invalid, starting fresh.");
+        }
+    } catch (error) {
+        console.error("Save file corrupted. Resetting save.", error);
+        localStorage.removeItem(SAVE_KEY); // Delete bad file
+    }
+}
+
+// --- NEW: Reset Function ---
+export function resetGameProgress() {
+    localStorage.removeItem(SAVE_KEY);
+    location.reload();
+}
 
 export function initGameState() {
-    // Reset State
+    // 1. Reset generic state
     gameState.player.currentHp = gameState.player.maxHp;
     gameState.enemy.currentHp = gameState.enemy.maxHp;
     gameState.isPlayerTurn = true;
     gameState.gameOver = false;
-    currentTaskIndex = 0; // Always start at 0
+    currentTaskIndex = 0; 
 
-    // Reset UI
+    // 2. Try to Load
+    loadGame();
+
+    // 3. Update UI based on loaded data
     updateHealthBar('player', 100, gameState.player.currentHp, gameState.player.maxHp);
     updateHealthBar('enemy', 100, gameState.enemy.currentHp, gameState.enemy.maxHp);
 
     logToConsole("Welcome to JS Quest!", 'system');
-    logToConsole("A pesky Glitchelin blocks your path!", 'enemy');
+    
+    // Show correct task based on loaded level
+    if (currentTaskIndex < spellTasks.length) {
+        updateTaskDisplay(spellTasks[currentTaskIndex].desc); 
+        logToConsole(`Current task: ${spellTasks[currentTaskIndex].desc}`, 'info');
+    }
 
-    // Show Task 1
-    updateTaskDisplay(spellTasks[currentTaskIndex].desc); 
-    logToConsole(`Current task: ${spellTasks[currentTaskIndex].desc}`, 'info');
-
-    // Set Images
     setCharacterImage('player', 'src/assets/images/Player.png');
     setCharacterImage('enemy', 'src/assets/images/Glitchlin.png');
 
@@ -54,14 +95,12 @@ export function initGameState() {
 
 function checkCode(code) {
     const task = spellTasks[currentTaskIndex];
-
     if(task.codeCheck.test(code.trim())) {
         return { success: true, damage: 20, message: `Correct! ${task.desc}` };
     } else {
         let hint;
         if (!/const|let|function|for/.test(code)) hint = "Check your keyword (const, let, function, for).";
         else hint = "Check your syntax or variable names carefully.";
-
         return { success: false, damage: 10, message: `Incorrect. Hint: ${hint}` };
     }
 }
@@ -84,12 +123,14 @@ export function handlePlayerTurn(userCode) {
 
             logToConsole(result.message, 'success');
             animateAttack('player', 'enemy', 'success');
-            
             clearCodeEditor();
 
-            // Next Level Logic (No Save)
+            // Next Level & Save
             currentTaskIndex++;
             if(currentTaskIndex < spellTasks.length) {
+                
+                saveGame(); // <--- AUTO SAVE HERE
+
                 updateTaskDisplay(spellTasks[currentTaskIndex].desc);
                 setTimeout(() => logToConsole(`Next task: ${spellTasks[currentTaskIndex].desc}`, 'info'), 1000);
             }
@@ -105,10 +146,8 @@ export function handlePlayerTurn(userCode) {
             logToConsole(`Your spell fizzles! You take ${result.damage} damage.`, 'damage');
         }
 
-        // Check Win/Lose
         if(checkWinCondition()) return;
 
-        // Reset Turn
         setTimeout(() => {
             if(!gameState.gameOver) {
                 gameState.isPlayerTurn = true;
@@ -125,6 +164,8 @@ function checkWinCondition() {
         showGameStatus('You Win!');
         gameState.gameOver = true;
         toggleRunButton(false);
+        // Clear save on win so they can restart fresh next time? 
+        // Or keep it to show they won. Let's keep it for now.
         return true;
     }
 

@@ -25,13 +25,17 @@
             <h1 class="text-xl font-bold text-cyan-400 tracking-wider">JS Quest</h1>
         </div>
         <div class="flex items-center gap-4">
-            <div class="px-4 py-1 bg-slate-800 rounded-full border border-slate-700 text-sm text-slate-300">
-                Level <span id="level-indicator" class="text-amber-400 font-bold">1</span>
-            </div>
-            <button onclick="window.location.reload()" class="p-2 hover:bg-slate-800 rounded-full transition-colors" title="Restart Game">
-                <i data-lucide="refresh-cw" class="w-5 h-5 text-slate-400"></i>
-            </button>
-        </div>
+    <div class="px-4 py-1 bg-slate-800 rounded-full border border-slate-700 text-sm text-slate-300">
+        Level <span id="level-indicator" class="text-amber-400 font-bold">1</span>
+    </div>
+
+    <button id="reset-btn" class="p-2 hover:bg-slate-800 rounded-full transition-colors text-red-400" title="Reset Progress">
+        <i data-lucide="trash" class="w-5 h-5"></i>
+    </button>
+    <button onclick="window.location.reload()" class="p-2 hover:bg-slate-800 rounded-full transition-colors" title="Restart Game">
+        <i data-lucide="refresh-cw" class="w-5 h-5 text-slate-400"></i>
+    </button>
+</div>
     </header>
 
     <main class="flex-grow flex flex-col lg:flex-row p-4 gap-4 overflow-hidden relative">
