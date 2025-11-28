@@ -8,7 +8,8 @@ import {
     setCharacterImage,
     clearCodeEditor,
     animateDamage,
-    updateLevelDisplay 
+    updateLevelDisplay,
+    updateStoryDisplay // <--- IMPORT THIS
 } from './ui_manager.js';
 
 let gameState = {
@@ -18,11 +19,9 @@ let gameState = {
     gameOver: false,
 };
 
-// ---------------------------------------------------------
-// REWRITTEN OBJECTIVES
-// ---------------------------------------------------------
+// ... (keep the spellTasks array exactly as it was in the previous step) ...
 const spellTasks = [
-    // --- BOSS 1: GOBLIN CAMP (Variables) ---
+    // --- BOSS 1: GOBLIN CAMP ---
     { 
         story: "Elara enters Whisperwood Forest. A bandit camp guarded by Goblins blocks the path!",
         desc: 'Define a constant named "hero" with the value "Elara".', 
@@ -53,102 +52,25 @@ const spellTasks = [
         hint: 'const hasShield = true',
         codeCheck: /const\s+hasShield\s*=\s*true/ 
     },
-
-    // --- BOSS 2: CYCLOPS LABYRINTH (Conditionals) ---
-    { 
-        story: "Elara reaches the Stone Archway. A massive Cyclops blocks the labyrinth entrance.",
-        desc: 'Check if "heroPower" is greater than 10.', 
-        hint: 'heroPower > 10',
-        codeCheck: /heroPower\s*>\s*10/ 
-    },
-    { 
-        story: "The Cyclops smashes the ground! She must check if the path is clear.",
-        desc: 'If "path" equals "clear", execute move().', 
-        hint: 'if (path === "clear") { move() }',
-        codeCheck: /if\s*\(\s*path\s*===\s*['"]clear['"]\s*\)\s*\{\s*move\(\)\s*\}/ 
-    },
-    { 
-        story: "A massive club swing! She needs to run AND dodge.",
-        desc: 'Write the logic for: run AND dodge.', 
-        hint: 'run && dodge',
-        codeCheck: /run\s*&&\s*dodge/ 
-    },
-    { 
-        story: "The Cyclops is tired. Aim for the head OR the legs.",
-        desc: 'Write the logic for: aimHead OR aimLegs.', 
-        hint: 'aimHead || aimLegs',
-        codeCheck: /aimHead\s*\|\|\s*aimLegs/ 
-    },
-    { 
-        story: "The Giant stumbles! Finish him or hide?",
-        desc: 'Use a ternary: if energy > 0 "strike", else "hide".', 
-        hint: 'const action = energy > 0 ? "strike" : "hide"',
-        codeCheck: /const\s+action\s*=\s*energy\s*>\s*0\s*\?\s*['"]strike['"]\s*:\s*['"]hide['"]/ 
-    },
-
-    // --- BOSS 3: BAT CAVERNS (Arrays & Loops) ---
-    { 
-        story: "Victory! But now screeching fills the air. The Bat Caverns...",
-        desc: 'List "bat1" and "bat2" inside a "bats" array.', 
-        hint: 'const bats = ["bat1", "bat2"]',
-        codeCheck: /const\s+bats\s*=\s*\[\s*['"]bat1['"]\s*,\s*['"]bat2['"]\s*\]/ 
-    },
-    { 
-        story: "They are swarming! Elara needs Wind magic in her spell list.",
-        desc: 'Push the "Wind" spell into your array.', 
-        hint: 'spells.push("Wind")',
-        codeCheck: /spells\.push\(\s*['"]Wind['"]\s*\)/ 
-    },
-    { 
-        story: "It's too dark. How many are there?",
-        desc: 'Find the total number (.length) of bats.', 
-        hint: 'bats.length',
-        codeCheck: /bats\.length/ 
-    },
-    { 
-        story: "She must attack them all at once!",
-        desc: 'Create a loop that runs 5 times.', 
-        hint: 'for(let i=0; i<5; i++) { attack() }',
-        codeCheck: /for\s*\(\s*let\s+i\s*=\s*0\s*;\s*i\s*<\s*5\s*;\s*i\+\+\s*\)\s*\{\s*attack\(\)\s*\}/ 
-    },
-    { 
-        story: "The Alpha Bat remains. Target the first one in the list.",
-        desc: 'Access the first element of the "bats" array.', 
-        hint: 'bats[0]',
-        codeCheck: /bats\[\s*0\s*\]/ 
-    },
-
-    // --- BOSS 4: DRAGON'S LAIR (Functions & Objects) ---
-    { 
-        story: "The Obsidian Spikes. Drakkonis Rex, the Dragon, descends!",
-        desc: 'Define a "dragon" object with a "name" property.', 
-        hint: 'const dragon = { name: "Drakkonis" }',
-        codeCheck: /const\s+dragon\s*=\s*\{\s*name\s*:\s*['"]Drakkonis['"]\s*\}/ 
-    },
-    { 
-        story: "He breathes fire! Cast a protective ward function.",
-        desc: 'Write a "cast" function that returns "fire".', 
-        hint: 'function cast() { return "fire" }',
-        codeCheck: /function\s+cast\s*\(\s*\)\s*\{\s*return\s*['"]fire['"]\s*\}/ 
-    },
-    { 
-        story: "The Dragon prepares a breath attack. Analyze its property.",
-        desc: 'Assign "fire" to the dragon.breath property.', 
-        hint: 'dragon.breath = "fire"',
-        codeCheck: /dragon\.breath\s*=\s*['"]fire['"]/ 
-    },
-    { 
-        story: "Mid-air combat! Morph fireball into Ice Spear.",
-        desc: 'Create an arrow function "iceSpear" returning "frozen".', 
-        hint: 'const iceSpear = (target) => "frozen"',
-        codeCheck: /const\s+iceSpear\s*=\s*\(\s*target\s*\)\s*=>\s*['"]frozen['"]/ 
-    },
-    { 
-        story: "The Final Blow! Combine all elements!",
-        desc: 'Define a "win" function that returns true.', 
-        hint: 'function win() { return true }',
-        codeCheck: /function\s+win\s*\(\s*\)\s*\{\s*return\s*true\s*\}/ 
-    }
+    // ... (Keep the rest of the 20 tasks here, same as previous file) ...
+    // --- BOSS 2 ---
+    { story: "Elara reaches the Stone Archway. A massive Cyclops blocks the labyrinth entrance.", desc: 'Check if "heroPower" is greater than 10.', hint: 'heroPower > 10', codeCheck: /heroPower\s*>\s*10/ },
+    { story: "The Cyclops smashes the ground! She must check if the path is clear.", desc: 'If "path" equals "clear", execute move().', hint: 'if (path === "clear") { move() }', codeCheck: /if\s*\(\s*path\s*===\s*['"]clear['"]\s*\)\s*\{\s*move\(\)\s*\}/ },
+    { story: "A massive club swing! She needs to run AND dodge.", desc: 'Write the logic for: run AND dodge.', hint: 'run && dodge', codeCheck: /run\s*&&\s*dodge/ },
+    { story: "The Cyclops is tired. Aim for the head OR the legs.", desc: 'Write the logic for: aimHead OR aimLegs.', hint: 'aimHead || aimLegs', codeCheck: /aimHead\s*\|\|\s*aimLegs/ },
+    { story: "The Giant stumbles! Finish him or hide?", desc: 'Use a ternary: if energy > 0 "strike", else "hide".', hint: 'const action = energy > 0 ? "strike" : "hide"', codeCheck: /const\s+action\s*=\s*energy\s*>\s*0\s*\?\s*['"]strike['"]\s*:\s*['"]hide['"]/ },
+    // --- BOSS 3 ---
+    { story: "Victory! But now screeching fills the air. The Bat Caverns...", desc: 'List "bat1" and "bat2" inside a "bats" array.', hint: 'const bats = ["bat1", "bat2"]', codeCheck: /const\s+bats\s*=\s*\[\s*['"]bat1['"]\s*,\s*['"]bat2['"]\s*\]/ },
+    { story: "They are swarming! Elara needs Wind magic in her spell list.", desc: 'Push the "Wind" spell into your array.', hint: 'spells.push("Wind")', codeCheck: /spells\.push\(\s*['"]Wind['"]\s*\)/ },
+    { story: "It's too dark. How many are there?", desc: 'Find the total number (.length) of bats.', hint: 'bats.length', codeCheck: /bats\.length/ },
+    { story: "She must attack them all at once!", desc: 'Create a loop that runs 5 times.', hint: 'for(let i=0; i<5; i++) { attack() }', codeCheck: /for\s*\(\s*let\s+i\s*=\s*0\s*;\s*i\s*<\s*5\s*;\s*i\+\+\s*\)\s*\{\s*attack\(\)\s*\}/ },
+    { story: "The Alpha Bat remains. Target the first one in the list.", desc: 'Access the first element of the "bats" array.', hint: 'bats[0]', codeCheck: /bats\[\s*0\s*\]/ },
+    // --- BOSS 4 ---
+    { story: "The Obsidian Spikes. Drakkonis Rex, the Dragon, descends!", desc: 'Define a "dragon" object with a "name" property.', hint: 'const dragon = { name: "Drakkonis" }', codeCheck: /const\s+dragon\s*=\s*\{\s*name\s*:\s*['"]Drakkonis['"]\s*\}/ },
+    { story: "He breathes fire! Cast a protective ward function.", desc: 'Write a "cast" function that returns "fire".', hint: 'function cast() { return "fire" }', codeCheck: /function\s+cast\s*\(\s*\)\s*\{\s*return\s*['"]fire['"]\s*\}/ },
+    { story: "The Dragon prepares a breath attack. Analyze its property.", desc: 'Assign "fire" to the dragon.breath property.', hint: 'dragon.breath = "fire"', codeCheck: /dragon\.breath\s*=\s*['"]fire['"]/ },
+    { story: "Mid-air combat! Morph fireball into Ice Spear.", desc: 'Create an arrow function "iceSpear" returning "frozen".', hint: 'const iceSpear = (target) => "frozen"', codeCheck: /const\s+iceSpear\s*=\s*\(\s*target\s*\)\s*=>\s*['"]frozen['"]/ },
+    { story: "The Final Blow! Combine all elements!", desc: 'Define a "win" function that returns true.', hint: 'function win() { return true }', codeCheck: /function\s+win\s*\(\s*\)\s*\{\s*return\s*true\s*\}/ }
 ];
 
 let currentTaskIndex = 0;
@@ -223,6 +145,8 @@ export function initGameState() {
     updateHealthBar('enemy', (gameState.enemy.currentHp / 100) * 100, gameState.enemy.currentHp, 100);
 
     if (currentTaskIndex < spellTasks.length) {
+        // --- UPDATED: Show Story in the Box AND Console ---
+        updateStoryDisplay(spellTasks[currentTaskIndex].story);
         logToConsole(spellTasks[currentTaskIndex].story, 'info'); 
         updateTaskDisplay(spellTasks[currentTaskIndex].desc); 
     }
@@ -321,6 +245,10 @@ function proceedToNextTask() {
     if(currentTaskIndex < spellTasks.length) {
         updateLevelDisplay(currentTaskIndex + 1);
         updateTaskDisplay(spellTasks[currentTaskIndex].desc);
+        
+        // --- UPDATED: Update Story Box ---
+        updateStoryDisplay(spellTasks[currentTaskIndex].story);
+        
         setTimeout(() => {
             logToConsole(spellTasks[currentTaskIndex].story, 'info');
         }, 500);
@@ -330,10 +258,7 @@ function proceedToNextTask() {
 function checkWinCondition() {
     if(gameState.enemy.currentHp <= 0 && currentTaskIndex === spellTasks.length - 1) {
         logToConsole("LEGENDARY VICTORY! Elderglen is saved!", 'victory');
-        
-        // --- THIS USES THE NEW SIGNATURE ---
         showGameStatus('LEGENDARY VICTORY', 'Elderglen is saved!', true);
-        
         gameState.gameOver = true;
         toggleRunButton(false);
         localStorage.removeItem(SAVE_KEY); 
@@ -342,10 +267,7 @@ function checkWinCondition() {
 
     if(gameState.player.currentHp <= 0) {
         logToConsole("DEFEAT... The saga ends here.", 'defeat');
-        
-        // --- THIS USES THE NEW SIGNATURE ---
         showGameStatus('GAME OVER', 'The saga ends here.', false);
-        
         gameState.gameOver = true;
         toggleRunButton(false);
         saveGame({
