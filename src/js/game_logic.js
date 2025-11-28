@@ -9,7 +9,8 @@ import {
     clearCodeEditor,
     animateDamage,
     updateLevelDisplay,
-    updateStoryDisplay
+    updateStoryDisplay,
+    updateEnemyName // <--- IMPORT THIS
 } from './ui_manager.js';
 
 let gameState = {
@@ -19,7 +20,6 @@ let gameState = {
     gameOver: false,
 };
 
-// ... (KEEP THE spellTasks ARRAY EXACTLY AS IT IS) ...
 const spellTasks = [
     // --- BOSS 1: GOBLIN CAMP ---
     { 
@@ -177,7 +177,7 @@ function getCurrentBossInfo(levelIndex) {
     if (levelIndex < 5) return { name: "Goblin Scout", img: "src/assets/images/Glitchlin.png" };
     if (levelIndex < 10) return { name: "Stone Cyclops", img: "src/assets/images/Cyclop.png" };
     if (levelIndex < 15) return { name: "Cave Bat", img: "src/assets/images/Bat.png" };
-    return { name: "Drakkonis Rex", img: "src/assets/images/Dragon.png" };
+    return { name: "Drakkonis", img: "src/assets/images/Dragon.png" }; // --- UPDATED NAME ---
 }
 
 function saveGame(customData = null) {
@@ -215,15 +215,15 @@ export function resetGameProgress() {
 function updateBossUI() {
     const boss = getCurrentBossInfo(currentTaskIndex);
     setCharacterImage('enemy', boss.img);
+    updateEnemyName(boss.name); // --- CALL THE UPDATE FUNCTION ---
     if (currentTaskIndex % 5 === 0) {
         logToConsole(`--- ENCOUNTER: ${boss.name} ---`, 'system');
     }
 }
 
-// --- NEW: Helper to calculate 1-1, 1-5, 2-1 etc. ---
 function refreshLevelBadge() {
-    const chapter = Math.floor(currentTaskIndex / 5) + 1; // 1, 2, 3, 4
-    const stage = (currentTaskIndex % 5) + 1; // 1, 2, 3, 4, 5
+    const chapter = Math.floor(currentTaskIndex / 5) + 1; 
+    const stage = (currentTaskIndex % 5) + 1; 
     updateLevelDisplay(chapter, stage);
 }
 
@@ -236,7 +236,6 @@ export function initGameState() {
 
     const hasSave = loadGame();
     
-    // --- UPDATED: Calculate Chapter/Stage for display ---
     const chapter = Math.floor(currentTaskIndex / 5) + 1;
     const stage = (currentTaskIndex % 5) + 1;
 
@@ -246,7 +245,7 @@ export function initGameState() {
         logToConsole("Welcome to Chronicles of the Arcane Mage!", 'system');
     }
 
-    refreshLevelBadge(); // Updates UI 1-1
+    refreshLevelBadge(); 
     updateBossUI(); 
 
     updateHealthBar('player', (gameState.player.currentHp / 100) * 100, gameState.player.currentHp, 100);
@@ -350,9 +349,8 @@ export function handlePlayerTurn(userCode) {
 
 function proceedToNextTask() {
     if(currentTaskIndex < spellTasks.length) {
-        refreshLevelBadge(); // Updates UI to next level like 1-2
+        refreshLevelBadge(); 
         updateTaskDisplay(spellTasks[currentTaskIndex].desc);
-        
         updateStoryDisplay(spellTasks[currentTaskIndex].story);
         setTimeout(() => {
             logToConsole(spellTasks[currentTaskIndex].actionLog, 'info'); 

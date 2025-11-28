@@ -1,8 +1,7 @@
 import { animate } from "https://cdn.jsdelivr.net/npm/motion@10.17.0/+esm";
-import { GRIMOIRE_CHAPTERS } from "./grimoire_data.js"; // <--- Import Data
+import { GRIMOIRE_CHAPTERS } from "./grimoire_data.js";
 
 const elements = {
-    // ... (Keep existing elements) ...
     playerHealthBar: document.getElementById('player-health-bar'),
     enemyHealthBar: document.getElementById('enemy-health-bar'),
     playerHpText: document.getElementById('player-hp-text'),
@@ -18,8 +17,9 @@ const elements = {
     codeEditor: document.getElementById('code-editor'),
     levelIndicator: document.getElementById('level-indicator'),
     storyBoxText: document.getElementById('story-box-text'),
+    enemyName: document.getElementById('enemy-name'), // <--- NEW ID
     
-    // --- NEW GRIMOIRE ELEMENTS ---
+    // Grimoire
     grimoireOverlay: document.getElementById('grimoire-overlay'),
     grimoireToggleBtn: document.getElementById('grimoire-toggle-btn'),
     closeGrimoireBtn: document.getElementById('close-grimoire-btn'),
@@ -28,25 +28,28 @@ const elements = {
     docContent: document.getElementById('doc-content')
 };
 
-// --- NEW: Initialize Grimoire UI ---
+// --- NEW: Function to update Enemy Name ---
+export function updateEnemyName(name) {
+    if (elements.enemyName) {
+        elements.enemyName.textContent = name;
+    }
+}
+
 export function initGrimoireUI() {
     if (!elements.grimoireToggleBtn) return;
 
-    // Toggle Open
     elements.grimoireToggleBtn.addEventListener('click', () => {
         elements.grimoireOverlay.classList.remove('hidden');
         renderGrimoireList();
     });
 
-    // Close Button
     elements.closeGrimoireBtn.addEventListener('click', () => {
         elements.grimoireOverlay.classList.add('hidden');
     });
 
-    // Render the Sidebar List
     function renderGrimoireList() {
         if (!elements.grimoireList) return;
-        elements.grimoireList.innerHTML = ''; // Clear previous
+        elements.grimoireList.innerHTML = ''; 
 
         GRIMOIRE_CHAPTERS.forEach(chapter => {
             const li = document.createElement('li');
@@ -55,11 +58,9 @@ export function initGrimoireUI() {
             btn.textContent = chapter.title;
             
             btn.onclick = () => {
-                // Highlight active
                 Array.from(elements.grimoireList.children).forEach(c => c.firstChild.classList.remove('bg-purple-900/50', 'text-purple-300', 'border-purple-500/50'));
                 btn.classList.add('bg-purple-900/50', 'text-purple-300', 'border-purple-500/50');
                 
-                // Show Content
                 elements.docTitle.textContent = chapter.title;
                 elements.docContent.innerHTML = chapter.content;
             };
@@ -70,7 +71,6 @@ export function initGrimoireUI() {
     }
 }
 
-// ... (Rest of the file remains exactly the same as before) ...
 export function updateStoryDisplay(text) {
     if (elements.storyBoxText) {
         animate(elements.storyBoxText, { opacity: 0 }, { duration: 0.2 }).finished.then(() => {
