@@ -15,26 +15,22 @@ const elements = {
     currentTaskDesc: document.getElementById('current-task-desc'),
     codeEditor: document.getElementById('code-editor'),
     levelIndicator: document.getElementById('level-indicator'),
-    // --- NEW: Story Box Text Element ---
     storyBoxText: document.getElementById('story-box-text')
 };
 
-// --- NEW: Update the Orange Story Box ---
 export function updateStoryDisplay(text) {
     if (elements.storyBoxText) {
-        // Fade out
         animate(elements.storyBoxText, { opacity: 0 }, { duration: 0.2 }).finished.then(() => {
-            // Change text
             elements.storyBoxText.textContent = text;
-            // Fade in
             animate(elements.storyBoxText, { opacity: 1 }, { duration: 0.5 });
         });
     }
 }
 
-export function updateLevelDisplay(stageNumber) {
+// --- UPDATED: Accepts Chapter and Stage ---
+export function updateLevelDisplay(chapter, stage) {
     if (elements.levelIndicator) {
-        elements.levelIndicator.textContent = `1-${stageNumber}`;
+        elements.levelIndicator.textContent = `${chapter}-${stage}`;
     }
 }
 
