@@ -1,6 +1,8 @@
 import { animate } from "https://cdn.jsdelivr.net/npm/motion@10.17.0/+esm";
+import { GRIMOIRE_CHAPTERS } from "./grimoire_data.js"; // <--- Import Data
 
 const elements = {
+    // ... (Keep existing elements) ...
     playerHealthBar: document.getElementById('player-health-bar'),
     enemyHealthBar: document.getElementById('enemy-health-bar'),
     playerHpText: document.getElementById('player-hp-text'),
@@ -15,9 +17,60 @@ const elements = {
     currentTaskDesc: document.getElementById('current-task-desc'),
     codeEditor: document.getElementById('code-editor'),
     levelIndicator: document.getElementById('level-indicator'),
-    storyBoxText: document.getElementById('story-box-text')
+    storyBoxText: document.getElementById('story-box-text'),
+    
+    // --- NEW GRIMOIRE ELEMENTS ---
+    grimoireOverlay: document.getElementById('grimoire-overlay'),
+    grimoireToggleBtn: document.getElementById('grimoire-toggle-btn'),
+    closeGrimoireBtn: document.getElementById('close-grimoire-btn'),
+    grimoireList: document.getElementById('grimoire-list'),
+    docTitle: document.getElementById('doc-title'),
+    docContent: document.getElementById('doc-content')
 };
 
+// --- NEW: Initialize Grimoire UI ---
+export function initGrimoireUI() {
+    if (!elements.grimoireToggleBtn) return;
+
+    // Toggle Open
+    elements.grimoireToggleBtn.addEventListener('click', () => {
+        elements.grimoireOverlay.classList.remove('hidden');
+        renderGrimoireList();
+    });
+
+    // Close Button
+    elements.closeGrimoireBtn.addEventListener('click', () => {
+        elements.grimoireOverlay.classList.add('hidden');
+    });
+
+    // Render the Sidebar List
+    function renderGrimoireList() {
+        if (!elements.grimoireList) return;
+        elements.grimoireList.innerHTML = ''; // Clear previous
+
+        GRIMOIRE_CHAPTERS.forEach(chapter => {
+            const li = document.createElement('li');
+            const btn = document.createElement('button');
+            btn.className = "w-full text-left px-4 py-3 rounded-lg hover:bg-purple-900/30 text-slate-300 hover:text-purple-300 transition-colors text-sm font-medium border border-transparent hover:border-purple-500/30";
+            btn.textContent = chapter.title;
+            
+            btn.onclick = () => {
+                // Highlight active
+                Array.from(elements.grimoireList.children).forEach(c => c.firstChild.classList.remove('bg-purple-900/50', 'text-purple-300', 'border-purple-500/50'));
+                btn.classList.add('bg-purple-900/50', 'text-purple-300', 'border-purple-500/50');
+                
+                // Show Content
+                elements.docTitle.textContent = chapter.title;
+                elements.docContent.innerHTML = chapter.content;
+            };
+
+            li.appendChild(btn);
+            elements.grimoireList.appendChild(li);
+        });
+    }
+}
+
+// ... (Rest of the file remains exactly the same as before) ...
 export function updateStoryDisplay(text) {
     if (elements.storyBoxText) {
         animate(elements.storyBoxText, { opacity: 0 }, { duration: 0.2 }).finished.then(() => {
@@ -27,7 +80,6 @@ export function updateStoryDisplay(text) {
     }
 }
 
-// --- UPDATED: Accepts Chapter and Stage ---
 export function updateLevelDisplay(chapter, stage) {
     if (elements.levelIndicator) {
         elements.levelIndicator.textContent = `${chapter}-${stage}`;

@@ -29,6 +29,10 @@
                 Stage <span id="level-indicator" class="text-amber-400 font-bold">1-1</span>
             </div>
 
+            <button id="grimoire-toggle-btn" class="p-2 hover:bg-slate-800 rounded-full transition-colors text-purple-400 border border-purple-500/30" title="Open Grimoire">
+                <i data-lucide="book" class="w-5 h-5"></i>
+            </button>
+
             <button id="reset-btn" class="p-2 hover:bg-slate-800 rounded-full transition-colors text-red-400" title="Reset Progress">
                 <i data-lucide="trash" class="w-5 h-5"></i>
             </button>
@@ -82,7 +86,6 @@
         <div class="panel h-full lg:w-2/3 flex flex-col relative z-10 overflow-hidden gap-2">
             
             <div class="glass-panel flex-grow relative overflow-hidden flex flex-col">
-                
                 <div class="absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-20">
                     <div class="w-64">
                         <div class="flex justify-between text-base mb-1 font-bold">
@@ -111,17 +114,9 @@
                 </div>
 
                 <div class="flex-grow flex items-end justify-between px-20 pb-8 relative">
-                    <img id="player-character" 
-                        src="src/assets/images/Player.png" 
-                        alt="Wizard"
-                        class="w-56 h-56 object-contain relative z-10 filter drop-shadow-[0_0_25px_rgba(34,211,238,0.5)] animate-float transform transition-transform duration-300">
-
+                    <img id="player-character" src="src/assets/images/Player.png" alt="Wizard" class="w-56 h-56 object-contain relative z-10 filter drop-shadow-[0_0_25px_rgba(34,211,238,0.5)] animate-float transform transition-transform duration-300">
                     <div id="effects-layer" class="absolute inset-0 pointer-events-none flex items-center justify-center z-20"></div>
-
-                    <img id="enemy-character" 
-                        src="src/assets/images/Glitchlin.png" 
-                        alt="Enemy"
-                        class="w-56 h-56 object-contain relative z-10 animate-float filter drop-shadow-[0_0_35px_rgba(168,85,247,0.5)] transform transition-transform duration-300">
+                    <img id="enemy-character" src="src/assets/images/Glitchlin.png" alt="Enemy" class="w-56 h-56 object-contain relative z-10 animate-float filter drop-shadow-[0_0_35px_rgba(168,85,247,0.5)] transform transition-transform duration-300">
                 </div>
 
                 <div id="game-status-overlay" class="hidden absolute inset-0 bg-slate-900/90 z-50 flex flex-col items-center justify-center p-8 text-center backdrop-blur-sm"></div>
@@ -138,6 +133,33 @@
 
         </div>
     </main>
+
+    <div id="grimoire-overlay" class="hidden fixed inset-0 bg-slate-950/90 z-[100] flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="w-full max-w-4xl h-[80vh] bg-slate-900 border border-purple-500/50 rounded-xl shadow-2xl flex flex-col overflow-hidden relative">
+            
+            <div class="flex justify-between items-center p-4 bg-slate-800/80 border-b border-purple-500/30">
+                <h2 class="text-xl font-bold text-purple-400 flex items-center gap-2">
+                    <i data-lucide="book-open" class="w-6 h-6"></i> The Mage's Grimoire
+                </h2>
+                <button id="close-grimoire-btn" class="text-slate-400 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-8 h-8"></i>
+                </button>
+            </div>
+
+            <div class="flex-grow flex flex-col md:flex-row overflow-hidden">
+                <div class="w-full md:w-1/3 border-r border-slate-700 bg-slate-900/50 overflow-y-auto p-2">
+                    <ul id="grimoire-list" class="space-y-1"></ul>
+                </div>
+                
+                <div class="w-full md:w-2/3 p-8 overflow-y-auto bg-slate-900 font-mono">
+                    <h3 id="doc-title" class="text-2xl font-bold text-purple-300 mb-4">Select a Topic</h3>
+                    <div id="doc-content" class="text-slate-300 text-sm leading-relaxed space-y-4">
+                        <p>Welcome to the Grimoire. Select a magical concept from the left to study its syntax.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script type="module" src="src/js/main.js"></script>
 </body>

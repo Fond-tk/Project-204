@@ -134,8 +134,8 @@ const spellTasks = [
 
     // --- BOSS 4: DRAGON'S LAIR ---
     { 
-        story: "Elara finally stands before the dragon's lair. The air is thick with sulfur as she approaches the obsidian spikes of Drakkonis Rex.",
-        actionLog: "BOSS FIGHT: Drakkonis Rex!",
+        story: "Elara finally stands before the dragon's lair. The air is thick with sulfur as she approaches the obsidian spikes of Drakkonis.",
+        actionLog: "BOSS FIGHT: Drakkonis!",
         desc: 'Define a "dragon" object with a "name" property.', 
         hint: 'const dragon = { name: "Drakkonis" }',
         codeCheck: /const\s+dragon\s*=\s*\{\s*name\s*:\s*['"]Drakkonis['"]\s*\}/ 
