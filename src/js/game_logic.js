@@ -8,7 +8,7 @@ import {
     setCharacterImage,
     clearCodeEditor,
     animateDamage,
-    updateLevelDisplay // <--- IMPORT THIS
+    updateLevelDisplay 
 } from './ui_manager.js';
 
 let gameState = {
@@ -19,15 +19,144 @@ let gameState = {
 };
 
 const spellTasks = [
-    { desc: 'Declare a variable spell with value "fireball"', codeCheck: /const\s+spell\s*=\s*['"]fireball['"]/ },
-    { desc: 'Create let damage = 10 + 5', codeCheck: /let\s+damage\s*=\s*10\s*\+\s*5/ },
-    { desc: 'Create array spells with ["fireball","iceblast"]', codeCheck: /const\s+spells\s*=\s*\[\s*['"]fireball['"]\s*,\s*['"]iceblast['"]\s*\]/ },
-    { desc: 'Create function cast(spell) returning spell+"!"', codeCheck: /function\s+cast\s*\(\s*spell\s*\)\s*{[^}]+}/ },
-    { desc: 'Write for loop 0 to 2', codeCheck: /for\s*\(\s*let\s+i\s*=\s*0\s*;\s*i\s*<\s*3\s*;/ }
+    // --- BOSS 1: GOBLIN CAMP ---
+    { 
+        story: "Elara enters Whisperwood Forest. A bandit camp guarded by Goblins blocks the path!",
+        desc: 'Declare a constant variable "hero" with value "Elara"', 
+        hint: 'const hero = "Elara"',
+        codeCheck: /const\s+hero\s*=\s*['"]Elara['"]/ 
+    },
+    { 
+        story: "She spots rare herbs nearby, but needs to count them quickly before the Goblins notice.",
+        desc: 'Create a variable "herbs" equal to 5', 
+        hint: 'let herbs = 5',
+        codeCheck: /let\s+herbs\s*=\s*5/ 
+    },
+    { 
+        story: "The Goblins attack! Elara prepares her signature spell.",
+        desc: 'Declare a constant "spell" with value "Fireball"', 
+        hint: 'const spell = "Fireball"',
+        codeCheck: /const\s+spell\s*=\s*['"]Fireball['"]/ 
+    },
+    { 
+        story: "The Goblin Captain charges. Elara needs to calculate double damage!",
+        desc: 'Create variable "attack" that equals 10 * 2', 
+        hint: 'let attack = 10 * 2',
+        codeCheck: /let\s+attack\s*=\s*10\s*\*\s*2/ 
+    },
+    { 
+        story: "Blades fly everywhere! Elara raises a magical ward.",
+        desc: 'Create a constant "hasShield" set to true', 
+        hint: 'const hasShield = true',
+        codeCheck: /const\s+hasShield\s*=\s*true/ 
+    },
+
+    // --- BOSS 2: CYCLOPS LABYRINTH ---
+    { 
+        story: "Elara reaches the Stone Archway. A massive Cyclops blocks the labyrinth entrance.",
+        desc: 'Check if heroPower > 10', 
+        hint: 'heroPower > 10',
+        codeCheck: /heroPower\s*>\s*10/ 
+    },
+    { 
+        story: "The Cyclops smashes the ground! She must check if the path is clear.",
+        desc: 'Write: if (path === "clear") { move() }', 
+        hint: 'if (path === "clear") { move() }',
+        codeCheck: /if\s*\(\s*path\s*===\s*['"]clear['"]\s*\)\s*\{\s*move\(\)\s*\}/ 
+    },
+    { 
+        story: "A massive club swing! She needs to run AND dodge.",
+        desc: 'Write the logic: run && dodge', 
+        hint: 'run && dodge',
+        codeCheck: /run\s*&&\s*dodge/ 
+    },
+    { 
+        story: "The Cyclops is tired. Aim for the head OR the legs.",
+        desc: 'Write the logic: aimHead || aimLegs', 
+        hint: 'aimHead || aimLegs',
+        codeCheck: /aimHead\s*\|\|\s*aimLegs/ 
+    },
+    { 
+        story: "The Giant stumbles! Finish him or hide?",
+        desc: 'Use ternary: const action = energy > 0 ? "strike" : "hide"', 
+        hint: 'const action = energy > 0 ? "strike" : "hide"',
+        codeCheck: /const\s+action\s*=\s*energy\s*>\s*0\s*\?\s*['"]strike['"]\s*:\s*['"]hide['"]/ 
+    },
+
+    // --- BOSS 3: BAT CAVERNS ---
+    { 
+        story: "Victory! But now screeching fills the air. The Bat Caverns...",
+        desc: 'Create an array "bats" with values ["bat1", "bat2"]', 
+        hint: 'const bats = ["bat1", "bat2"]',
+        codeCheck: /const\s+bats\s*=\s*\[\s*['"]bat1['"]\s*,\s*['"]bat2['"]\s*\]/ 
+    },
+    { 
+        story: "They are swarming! Elara needs Wind magic in her spell list.",
+        desc: 'Add "Wind" to the spells array using .push()', 
+        hint: 'spells.push("Wind")',
+        codeCheck: /spells\.push\(\s*['"]Wind['"]\s*\)/ 
+    },
+    { 
+        story: "It's too dark. How many are there?",
+        desc: 'Get the number of bats using .length', 
+        hint: 'bats.length',
+        codeCheck: /bats\.length/ 
+    },
+    { 
+        story: "She must attack them all at once!",
+        desc: 'Write a loop: for(let i=0; i<5; i++) { attack() }', 
+        hint: 'for(let i=0; i<5; i++) { attack() }',
+        codeCheck: /for\s*\(\s*let\s+i\s*=\s*0\s*;\s*i\s*<\s*5\s*;\s*i\+\+\s*\)\s*\{\s*attack\(\)\s*\}/ 
+    },
+    { 
+        story: "The Alpha Bat remains. Target the first one in the list.",
+        desc: 'Access the first bat: bats[0]', 
+        hint: 'bats[0]',
+        codeCheck: /bats\[\s*0\s*\]/ 
+    },
+
+    // --- BOSS 4: DRAGON'S LAIR ---
+    { 
+        story: "The Obsidian Spikes. Drakkonis Rex, the Dragon, descends!",
+        desc: 'Create an object: const dragon = { name: "Drakkonis" }', 
+        hint: 'const dragon = { name: "Drakkonis" }',
+        codeCheck: /const\s+dragon\s*=\s*\{\s*name\s*:\s*['"]Drakkonis['"]\s*\}/ 
+    },
+    { 
+        story: "He breathes fire! Cast a protective ward function.",
+        desc: 'Write: function cast() { return "fire" }', 
+        hint: 'function cast() { return "fire" }',
+        codeCheck: /function\s+cast\s*\(\s*\)\s*\{\s*return\s*['"]fire['"]\s*\}/ 
+    },
+    { 
+        story: "The Dragon prepares a breath attack. Analyze its property.",
+        desc: 'Set dragon.breath = "fire"', 
+        hint: 'dragon.breath = "fire"',
+        codeCheck: /dragon\.breath\s*=\s*['"]fire['"]/ 
+    },
+    { 
+        story: "Mid-air combat! Morph fireball into Ice Spear.",
+        desc: 'Create arrow function: const iceSpear = (target) => "frozen"', 
+        hint: 'const iceSpear = (target) => "frozen"',
+        codeCheck: /const\s+iceSpear\s*=\s*\(\s*target\s*\)\s*=>\s*['"]frozen['"]/ 
+    },
+    { 
+        story: "The Final Blow! Combine all elements!",
+        desc: 'Write: function win() { return true }', 
+        hint: 'function win() { return true }',
+        codeCheck: /function\s+win\s*\(\s*\)\s*\{\s*return\s*true\s*\}/ 
+    }
 ];
 
 let currentTaskIndex = 0;
-const SAVE_KEY = 'js_quest_save_v4'; 
+const SAVE_KEY = 'js_quest_save_v5'; 
+
+function getCurrentBossInfo(levelIndex) {
+    if (levelIndex < 5) return { name: "Goblin Scout", img: "src/assets/images/Glitchlin.png" };
+    if (levelIndex < 10) return { name: "Stone Cyclops", img: "src/assets/images/Cyclop.png" };
+    if (levelIndex < 15) return { name: "Cave Bat", img: "src/assets/images/Bat.png" };
+    return { name: "Drakkonis Rex", img: "src/assets/images/Dragon.png" };
+}
 
 function saveGame(customData = null) {
     const data = customData || {
@@ -36,16 +165,13 @@ function saveGame(customData = null) {
         enemyHp: gameState.enemy.currentHp
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-    console.log("Game Saved:", data);
 }
 
 function loadGame() {
     try {
         const rawData = localStorage.getItem(SAVE_KEY);
         if (!rawData) return false;
-
         const data = JSON.parse(rawData);
-
         if (typeof data.level === 'number' && data.level < spellTasks.length) {
             currentTaskIndex = data.level;
             gameState.player.currentHp = data.playerHp;
@@ -54,7 +180,6 @@ function loadGame() {
         } 
         return false;
     } catch (error) {
-        console.error("Save corrupted, clearing...", error);
         localStorage.removeItem(SAVE_KEY);
         return false;
     }
@@ -63,6 +188,14 @@ function loadGame() {
 export function resetGameProgress() {
     localStorage.removeItem(SAVE_KEY);
     location.reload();
+}
+
+function updateBossUI() {
+    const boss = getCurrentBossInfo(currentTaskIndex);
+    setCharacterImage('enemy', boss.img);
+    if (currentTaskIndex % 5 === 0) {
+        logToConsole(`--- ENCOUNTER: ${boss.name} ---`, 'system');
+    }
 }
 
 export function initGameState() {
@@ -75,25 +208,23 @@ export function initGameState() {
     const hasSave = loadGame();
     
     if (hasSave) {
-        logToConsole(`Resume Game: Level ${currentTaskIndex + 1}`, 'system');
+        logToConsole(`Resume Game: Stage ${currentTaskIndex + 1}`, 'system');
     } else {
-        logToConsole("Welcome to JS Quest! (New Game)", 'system');
+        logToConsole("Welcome to Chronicles of the Arcane Mage!", 'system');
     }
 
-    // --- NEW: Update the Level Badge ---
     updateLevelDisplay(currentTaskIndex + 1);
+    updateBossUI(); 
 
     updateHealthBar('player', (gameState.player.currentHp / 100) * 100, gameState.player.currentHp, 100);
     updateHealthBar('enemy', (gameState.enemy.currentHp / 100) * 100, gameState.enemy.currentHp, 100);
 
     if (currentTaskIndex < spellTasks.length) {
+        logToConsole(spellTasks[currentTaskIndex].story, 'info'); 
         updateTaskDisplay(spellTasks[currentTaskIndex].desc); 
-        logToConsole(`Current task: ${spellTasks[currentTaskIndex].desc}`, 'info');
     }
 
     setCharacterImage('player', 'src/assets/images/Player.png');
-    setCharacterImage('enemy', 'src/assets/images/Glitchlin.png');
-
     toggleRunButton(true);
 }
 
@@ -103,8 +234,8 @@ function checkCode(code) {
         return { success: true, damage: 20, message: `Correct! ${task.desc}` };
     } else {
         let hint;
-        if (!/const|let|function|for/.test(code)) hint = "Check your keyword (const, let, function, for).";
-        else hint = "Check your syntax or variable names carefully.";
+        if (!/const|let|function|for|if/.test(code)) hint = "Check your keywords (const, let, if, for).";
+        else hint = "Check your syntax carefully.";
         return { success: false, damage: 10, message: `Incorrect. Hint: ${hint}` };
     }
 }
@@ -114,7 +245,7 @@ export function handlePlayerTurn(userCode) {
 
     gameState.isPlayerTurn = false;
     toggleRunButton(false);
-    logToConsole("Casting your spell...", 'info');
+    logToConsole("Casting spell...", 'info');
 
     const result = checkCode(userCode);
 
@@ -122,11 +253,13 @@ export function handlePlayerTurn(userCode) {
         if(result.success) {
             let newEnemyHp = gameState.enemy.currentHp - result.damage;
 
-            if (currentTaskIndex < spellTasks.length - 1) {
+            const isBossFinalStage = (currentTaskIndex + 1) % 5 === 0;
+            const isLastGameStage = currentTaskIndex === spellTasks.length - 1;
+
+            if (!isBossFinalStage && !isLastGameStage) {
                 newEnemyHp = Math.max(1, newEnemyHp); 
             } else {
                 newEnemyHp = Math.max(0, newEnemyHp);
-                if (newEnemyHp > 0) newEnemyHp = 0;
             }
 
             gameState.enemy.currentHp = newEnemyHp;
@@ -138,18 +271,24 @@ export function handlePlayerTurn(userCode) {
 
             if (gameState.enemy.currentHp > 0) {
                 currentTaskIndex++;
-                
-                // --- NEW: Update the Level Badge on success ---
-                updateLevelDisplay(currentTaskIndex + 1);
-                
                 saveGame();
-                if(currentTaskIndex < spellTasks.length) {
-                    updateTaskDisplay(spellTasks[currentTaskIndex].desc);
-                    setTimeout(() => logToConsole(`Next task: ${spellTasks[currentTaskIndex].desc}`, 'info'), 1000);
-                }
+                proceedToNextTask();
             } else {
-                checkWinCondition();
-                return;
+                if (isLastGameStage) {
+                    checkWinCondition();
+                    return;
+                }
+                
+                logToConsole("Boss Defeated! The path opens...", 'victory');
+                
+                setTimeout(() => {
+                    currentTaskIndex++;
+                    gameState.enemy.currentHp = 100; 
+                    updateHealthBar('enemy', 100, 100, 100);
+                    updateBossUI(); 
+                    saveGame();
+                    proceedToNextTask();
+                }, 2000);
             }
 
         } else {
@@ -158,11 +297,9 @@ export function handlePlayerTurn(userCode) {
 
             logToConsole(result.message, 'error');
             animateDamage('player'); 
-            logToConsole(`Your spell fizzles! You take ${result.damage} damage.`, 'damage');
+            logToConsole(`You take ${result.damage} damage.`, 'damage');
 
-            if (gameState.player.currentHp > 0) {
-                saveGame();
-            }
+            if (gameState.player.currentHp > 0) saveGame();
         }
 
         if(checkWinCondition()) return;
@@ -177,10 +314,23 @@ export function handlePlayerTurn(userCode) {
     }, 500);
 }
 
+function proceedToNextTask() {
+    if(currentTaskIndex < spellTasks.length) {
+        updateLevelDisplay(currentTaskIndex + 1);
+        updateTaskDisplay(spellTasks[currentTaskIndex].desc);
+        setTimeout(() => {
+            logToConsole(spellTasks[currentTaskIndex].story, 'info');
+        }, 500);
+    }
+}
+
 function checkWinCondition() {
-    if(gameState.enemy.currentHp <= 0) {
-        logToConsole("VICTORY! You defeated the Glitchelin!", 'victory');
-        showGameStatus('You Win!');
+    if(gameState.enemy.currentHp <= 0 && currentTaskIndex === spellTasks.length - 1) {
+        logToConsole("LEGENDARY VICTORY! Elderglen is saved!", 'victory');
+        
+        // --- THIS USES THE NEW SIGNATURE ---
+        showGameStatus('LEGENDARY VICTORY', 'Elderglen is saved!', true);
+        
         gameState.gameOver = true;
         toggleRunButton(false);
         localStorage.removeItem(SAVE_KEY); 
@@ -188,8 +338,11 @@ function checkWinCondition() {
     }
 
     if(gameState.player.currentHp <= 0) {
-        logToConsole("DEFEAT... The Glitchelin defeated you.", 'defeat');
-        showGameStatus('Game Over');
+        logToConsole("DEFEAT... The saga ends here.", 'defeat');
+        
+        // --- THIS USES THE NEW SIGNATURE ---
+        showGameStatus('GAME OVER', 'The saga ends here.', false);
+        
         gameState.gameOver = true;
         toggleRunButton(false);
         saveGame({
@@ -199,6 +352,5 @@ function checkWinCondition() {
         });
         return true;
     }
-
     return false;
 }

@@ -14,14 +14,11 @@ const elements = {
     gameStatusOverlay: document.getElementById('game-status-overlay'),
     currentTaskDesc: document.getElementById('current-task-desc'),
     codeEditor: document.getElementById('code-editor'),
-    // --- NEW: Select the Level Indicator ---
     levelIndicator: document.getElementById('level-indicator') 
 };
 
-// --- NEW: Function to update the Level Badge ---
 export function updateLevelDisplay(stageNumber) {
     if (elements.levelIndicator) {
-        // Displays as "1-1", "1-2", etc.
         elements.levelIndicator.textContent = `1-${stageNumber}`;
     }
 }
@@ -117,7 +114,8 @@ export function animateDamage(target) {
     }
 }
 
-export function showGameStatus(message) {
+// --- UPDATED FUNCTION ---
+export function showGameStatus(titleText, subText, isVictory) {
     let statusDiv = document.getElementById('game-status-overlay');
     if (!statusDiv) {
         statusDiv = document.createElement('div');
@@ -129,17 +127,17 @@ export function showGameStatus(message) {
     statusDiv.classList.remove('hidden');
 
     const title = document.createElement('h2');
-    title.textContent = message;
+    title.textContent = titleText;
     title.className = 'text-6xl font-bold mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]';
-    const subtext = document.createElement('p');
-    subtext.className = 'text-xl text-slate-300 mb-8';
+    
+    const sub = document.createElement('p');
+    sub.textContent = subText;
+    sub.className = 'text-xl text-slate-300 mb-8';
 
-    if(message === "You Win!") {
+    if(isVictory) {
         title.style.color = '#22d3ee'; 
-        subtext.textContent = "You fixed the glitch!";
     } else {
         title.style.color = '#f43f5e'; 
-        subtext.textContent = "The system crashed...";
     }
     
     const reloadBtn = document.createElement('button');
@@ -147,6 +145,6 @@ export function showGameStatus(message) {
     reloadBtn.className = "px-8 py-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg font-bold transition-all shadow-lg hover:shadow-cyan-500/50";
     reloadBtn.onclick = () => location.reload();
     statusDiv.appendChild(title);
-    statusDiv.appendChild(subtext);
+    statusDiv.appendChild(sub);
     statusDiv.appendChild(reloadBtn);
 }
