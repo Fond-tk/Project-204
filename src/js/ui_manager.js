@@ -17,7 +17,7 @@ const elements = {
     codeEditor: document.getElementById('code-editor'),
     levelIndicator: document.getElementById('level-indicator'),
     storyBoxText: document.getElementById('story-box-text'),
-    enemyName: document.getElementById('enemy-name'), // <--- NEW ID
+    enemyName: document.getElementById('enemy-name'),
     
     // Grimoire
     grimoireOverlay: document.getElementById('grimoire-overlay'),
@@ -25,23 +25,102 @@ const elements = {
     closeGrimoireBtn: document.getElementById('close-grimoire-btn'),
     grimoireList: document.getElementById('grimoire-list'),
     docTitle: document.getElementById('doc-title'),
-    docContent: document.getElementById('doc-content')
+    docContent: document.getElementById('doc-content'),
+
+    // Level Select
+    levelSelectBtn: document.getElementById('level-select-btn'),
+    levelSelectOverlay: document.getElementById('level-select-overlay'),
+    closeLevelBtn: document.getElementById('close-level-btn'),
+    levelGrid: document.getElementById('level-grid')
 };
 
-// --- NEW: Function to update Enemy Name ---
-export function updateEnemyName(name) {
-    if (elements.enemyName) {
-        elements.enemyName.textContent = name;
+// --- UPDATED: Restored Colorful Text Classes ---
+export function initLevelSelectUI(isMapUnlocked, onLevelSelect) {
+    if (!elements.levelSelectBtn) return;
+
+    const newBtn = elements.levelSelectBtn.cloneNode(true);
+    elements.levelSelectBtn.parentNode.replaceChild(newBtn, elements.levelSelectBtn);
+    elements.levelSelectBtn = newBtn;
+
+    const currentText = document.getElementById('level-indicator') ? document.getElementById('level-indicator').textContent : "1-1";
+    
+    // NOTE: Added 'text-amber-400 font-bold' back to the span
+    elements.levelSelectBtn.innerHTML = `<span>Chapter <span id="level-indicator" class="text-amber-400 font-bold">${currentText}</span></span> <i data-lucide="map" class="w-3 h-3 ml-2"></i>`;
+    elements.levelSelectBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    elements.levelSelectBtn.classList.add('hover:bg-slate-700', 'cursor-pointer');
+    
+    if(window.lucide) lucide.createIcons();
+
+    elements.levelSelectBtn.addEventListener('click', () => {
+        elements.levelSelectOverlay.classList.remove('hidden');
+        renderLevelGrid();
+    });
+
+    const newClose = elements.closeLevelBtn.cloneNode(true);
+    elements.closeLevelBtn.parentNode.replaceChild(newClose, elements.closeLevelBtn);
+    elements.closeLevelBtn = newClose;
+    
+    elements.closeLevelBtn.addEventListener('click', () => {
+        elements.levelSelectOverlay.classList.add('hidden');
+    });
+
+    function renderLevelGrid() {
+        if (!elements.levelGrid) return;
+        elements.levelGrid.innerHTML = ''; 
+
+        if (!isMapUnlocked) {
+            elements.levelGrid.className = "flex flex-col items-center justify-center h-64 text-center space-y-4";
+            elements.levelGrid.innerHTML = `
+                <div class="p-4 bg-slate-800/50 rounded-full border border-slate-700">
+                    <i data-lucide="lock" class="w-8 h-8 text-slate-500"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-300">World Map Locked</h3>
+                    <p class="text-slate-500 text-sm mt-1">Complete the Chronicles (Chapter 4-5) to unlock stage selection.</p>
+                </div>
+            `;
+            if(window.lucide) lucide.createIcons();
+            return;
+        }
+
+        elements.levelGrid.className = "grid grid-cols-5 gap-3 w-full";
+        for (let i = 0; i < 20; i++) {
+            const btn = document.createElement('button');
+            const chapter = Math.floor(i / 5) + 1;
+            const stage = (i % 5) + 1;
+            
+            btn.className = `p-3 rounded-lg border text-sm font-bold transition-all bg-slate-800 border-slate-600 hover:bg-cyan-900/50 hover:border-cyan-500 text-cyan-400`;
+            btn.textContent = `${chapter}-${stage}`;
+
+            btn.onclick = () => {
+                elements.levelSelectOverlay.classList.add('hidden');
+                onLevelSelect(i); 
+            };
+
+            elements.levelGrid.appendChild(btn);
+        }
     }
+}
+
+export function updateEnemyName(name) {
+    if (elements.enemyName) elements.enemyName.textContent = name;
 }
 
 export function initGrimoireUI() {
     if (!elements.grimoireToggleBtn) return;
 
+    const newBtn = elements.grimoireToggleBtn.cloneNode(true);
+    elements.grimoireToggleBtn.parentNode.replaceChild(newBtn, elements.grimoireToggleBtn);
+    elements.grimoireToggleBtn = newBtn;
+
     elements.grimoireToggleBtn.addEventListener('click', () => {
         elements.grimoireOverlay.classList.remove('hidden');
         renderGrimoireList();
     });
+
+    const newClose = elements.closeGrimoireBtn.cloneNode(true);
+    elements.closeGrimoireBtn.parentNode.replaceChild(newClose, elements.closeGrimoireBtn);
+    elements.closeGrimoireBtn = newClose;
 
     elements.closeGrimoireBtn.addEventListener('click', () => {
         elements.grimoireOverlay.classList.add('hidden');
@@ -60,7 +139,6 @@ export function initGrimoireUI() {
             btn.onclick = () => {
                 Array.from(elements.grimoireList.children).forEach(c => c.firstChild.classList.remove('bg-purple-900/50', 'text-purple-300', 'border-purple-500/50'));
                 btn.classList.add('bg-purple-900/50', 'text-purple-300', 'border-purple-500/50');
-                
                 elements.docTitle.textContent = chapter.title;
                 elements.docContent.innerHTML = chapter.content;
             };
@@ -81,8 +159,9 @@ export function updateStoryDisplay(text) {
 }
 
 export function updateLevelDisplay(chapter, stage) {
-    if (elements.levelIndicator) {
-        elements.levelIndicator.textContent = `${chapter}-${stage}`;
+    const indicator = document.getElementById('level-indicator');
+    if (indicator) {
+        indicator.textContent = `${chapter}-${stage}`;
     }
 }
 
