@@ -11,12 +11,13 @@ import {
     updateLevelDisplay,
     updateStoryDisplay,
     updateEnemyName,
-    initLevelSelectUI 
+    initLevelSelectUI,
+    showLevelUpModal 
 } from './ui_manager.js';
 
 let gameState = {
     player: { maxHp: 100, currentHp: 100 },
-    enemy: { maxHp: 100, currentHp: 100 }, // Max HP is now dynamic
+    enemy: { maxHp: 100, currentHp: 100 },
     isPlayerTurn: true,
     gameOver: false,
     gameCompleted: false
@@ -51,7 +52,7 @@ const spellTasks = [
 
 let currentTaskIndex = 0;
 let maxUnlockedLevel = 0;
-const SAVE_KEY = 'js_quest_save_v10'; // Bump version for new stats
+const SAVE_KEY = 'js_quest_save_v10'; 
 
 function getCurrentBossInfo(levelIndex) {
     if (levelIndex < 5) return { name: "Goblin Scout", img: "src/assets/images/Glitchlin.png" };
@@ -60,13 +61,11 @@ function getCurrentBossInfo(levelIndex) {
     return { name: "Drakkonis", img: "src/assets/images/Dragon.png" }; 
 }
 
-// --- NEW: Dynamic Difficulty Scaling ---
 function getChapterStats(levelIndex) {
-    // Returns { maxHp, playerDamage }
-    if (levelIndex < 5)  return { maxHp: 100, playerDamage: 20 };  // Goblin: 5 hits (100/20)
-    if (levelIndex < 10) return { maxHp: 200, playerDamage: 40 };  // Cyclops: 5 hits (200/40)
-    if (levelIndex < 15) return { maxHp: 300, playerDamage: 60 };  // Bat: 5 hits (300/60)
-    return { maxHp: 500, playerDamage: 100 };                      // Dragon: 5 hits (500/100)
+    if (levelIndex < 5)  return { maxHp: 100, playerDamage: 20 };
+    if (levelIndex < 10) return { maxHp: 200, playerDamage: 40 };
+    if (levelIndex < 15) return { maxHp: 300, playerDamage: 60 };
+    return { maxHp: 500, playerDamage: 100 };
 }
 
 function calculatePenalty(levelIndex) {
@@ -74,6 +73,29 @@ function calculatePenalty(levelIndex) {
     if (levelIndex < 10) return 20;
     if (levelIndex < 15) return 30;
     return 50; 
+}
+
+// --- Healing Logic ---
+function triggerRandomHeal() {
+    // 40% Chance to heal
+    if (Math.random() < 0.4) {
+        const healOptions = [0.2, 0.4, 0.6, 0.8, 1.0];
+        const randomPercent = healOptions[Math.floor(Math.random() * healOptions.length)];
+        
+        const healAmount = Math.floor(100 * randomPercent); 
+        const oldHp = gameState.player.currentHp;
+        
+        gameState.player.currentHp = Math.min(100, gameState.player.currentHp + healAmount);
+        
+        const actualHealed = gameState.player.currentHp - oldHp;
+
+        if (actualHealed > 0) {
+            updateHealthBar('player', gameState.player.currentHp, gameState.player.currentHp, 100);
+            logToConsole(`🍀 Fortune smiles! You found a potion (+${actualHealed} HP)`, 'success');
+            return actualHealed; 
+        }
+    }
+    return 0; // No heal
 }
 
 function saveGame(customData = null) {
@@ -130,10 +152,9 @@ function refreshLevelBadge() {
 function jumpToLevel(levelIndex) {
     currentTaskIndex = levelIndex;
     
-    // Set Stats based on Level
     const stats = getChapterStats(levelIndex);
     gameState.enemy.maxHp = stats.maxHp;
-    gameState.enemy.currentHp = stats.maxHp; // Full HP on jump
+    gameState.enemy.currentHp = stats.maxHp; 
     
     gameState.player.currentHp = 100;
     gameState.gameOver = false;
@@ -145,7 +166,6 @@ function jumpToLevel(levelIndex) {
     updateBossUI();
     
     updateHealthBar('player', 100, 100, 100);
-    // Use dynamic Max HP for enemy bar
     updateHealthBar('enemy', 100, gameState.enemy.currentHp, gameState.enemy.maxHp);
 
     updateStoryDisplay(spellTasks[currentTaskIndex].story); 
@@ -167,7 +187,6 @@ export function initGameState() {
     
     initLevelSelectUI(gameState.gameCompleted, jumpToLevel);
 
-    // Initialize stats based on current level
     const stats = getChapterStats(currentTaskIndex);
     gameState.enemy.maxHp = stats.maxHp;
     if (!hasSave) gameState.enemy.currentHp = stats.maxHp;
@@ -185,7 +204,6 @@ export function initGameState() {
     updateBossUI(); 
 
     updateHealthBar('player', (gameState.player.currentHp / 100) * 100, gameState.player.currentHp, 100);
-    // Use dynamic Max HP
     updateHealthBar('enemy', (gameState.enemy.currentHp / gameState.enemy.maxHp) * 100, gameState.enemy.currentHp, gameState.enemy.maxHp);
 
     if (currentTaskIndex < spellTasks.length) {
@@ -201,7 +219,6 @@ export function initGameState() {
 function checkCode(code) {
     const task = spellTasks[currentTaskIndex];
     const penalty = calculatePenalty(currentTaskIndex);
-    // Get dynamic damage
     const stats = getChapterStats(currentTaskIndex);
 
     if(task.codeCheck.test(code.trim())) {
@@ -237,7 +254,6 @@ export function handlePlayerTurn(userCode) {
             }
 
             gameState.enemy.currentHp = newEnemyHp;
-            // Use Dynamic Max HP
             updateHealthBar('enemy', (newEnemyHp/gameState.enemy.maxHp)*100, newEnemyHp, gameState.enemy.maxHp);
 
             logToConsole(result.message, 'success');
@@ -263,23 +279,27 @@ export function handlePlayerTurn(userCode) {
                 logToConsole("Boss Defeated! The path opens...", 'victory');
                 
                 setTimeout(() => {
-                    currentTaskIndex++;
-                    
-                    if (currentTaskIndex > maxUnlockedLevel) {
-                        maxUnlockedLevel = currentTaskIndex;
-                        initLevelSelectUI(maxUnlockedLevel, jumpToLevel);
-                    }
+                    // --- CHANGED: Heal ONLY happens here (End of Chapter) ---
+                    const healed = triggerRandomHeal();
 
-                    // Setup NEXT Boss Stats
-                    const nextStats = getChapterStats(currentTaskIndex);
-                    gameState.enemy.maxHp = nextStats.maxHp;
-                    gameState.enemy.currentHp = nextStats.maxHp; 
-                    
-                    updateHealthBar('enemy', 100, nextStats.maxHp, nextStats.maxHp);
-                    updateBossUI(); 
-                    saveGame();
-                    proceedToNextTask();
-                }, 2000);
+                    showLevelUpModal(() => {
+                        currentTaskIndex++;
+                        
+                        if (currentTaskIndex > maxUnlockedLevel) {
+                            maxUnlockedLevel = currentTaskIndex;
+                            initLevelSelectUI(maxUnlockedLevel, jumpToLevel);
+                        }
+
+                        const nextStats = getChapterStats(currentTaskIndex);
+                        gameState.enemy.maxHp = nextStats.maxHp;
+                        gameState.enemy.currentHp = nextStats.maxHp; 
+                        
+                        updateHealthBar('enemy', 100, nextStats.maxHp, nextStats.maxHp);
+                        updateBossUI(); 
+                        saveGame();
+                        proceedToNextTask();
+                    }, healed); 
+                }, 1000);
             }
 
         } else {
@@ -344,7 +364,6 @@ function checkWinCondition() {
         toggleRunButton(false);
         
         const restartIndex = Math.floor(currentTaskIndex / 5) * 5;
-        // Reset Enemy HP to Max for that boss
         const stats = getChapterStats(restartIndex);
 
         saveGame({
@@ -352,7 +371,7 @@ function checkWinCondition() {
             maxUnlocked: maxUnlockedLevel, 
             gameCompleted: gameState.gameCompleted,
             playerHp: 100,
-            enemyHp: stats.maxHp // Reset full enemy HP
+            enemyHp: stats.maxHp 
         });
         return true;
     }

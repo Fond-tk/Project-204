@@ -31,10 +31,43 @@ const elements = {
     levelSelectBtn: document.getElementById('level-select-btn'),
     levelSelectOverlay: document.getElementById('level-select-overlay'),
     closeLevelBtn: document.getElementById('close-level-btn'),
-    levelGrid: document.getElementById('level-grid')
+    levelGrid: document.getElementById('level-grid'),
+
+    // Level Up
+    levelUpOverlay: document.getElementById('level-up-overlay'),
+    levelUpContinueBtn: document.getElementById('level-up-continue-btn'),
+    levelUpHpStatus: document.getElementById('level-up-hp-status') // --- NEW ID
 };
 
-// --- UPDATED: Restored Colorful Text Classes ---
+// --- UPDATED: Accepts healedAmount to change text ---
+export function showLevelUpModal(callback, healedAmount = 0) {
+    if (elements.levelUpOverlay && elements.levelUpContinueBtn) {
+        
+        // Update HP Text based on heal result
+        if (elements.levelUpHpStatus) {
+            if (healedAmount > 0) {
+                elements.levelUpHpStatus.textContent = `RECOVERED (+${healedAmount})`;
+                elements.levelUpHpStatus.className = "text-green-400 font-mono font-bold";
+            } else {
+                elements.levelUpHpStatus.textContent = "PERSISTENT (No Heal)";
+                elements.levelUpHpStatus.className = "text-red-400 font-mono font-bold";
+            }
+        }
+
+        elements.levelUpOverlay.classList.remove('hidden');
+        
+        const newBtn = elements.levelUpContinueBtn.cloneNode(true);
+        elements.levelUpContinueBtn.parentNode.replaceChild(newBtn, elements.levelUpContinueBtn);
+        elements.levelUpContinueBtn = newBtn;
+
+        elements.levelUpContinueBtn.addEventListener('click', () => {
+            elements.levelUpOverlay.classList.add('hidden');
+            if (callback) callback();
+        });
+    }
+}
+
+// ... (Rest of file is identical to previous) ...
 export function initLevelSelectUI(isMapUnlocked, onLevelSelect) {
     if (!elements.levelSelectBtn) return;
 
@@ -44,7 +77,6 @@ export function initLevelSelectUI(isMapUnlocked, onLevelSelect) {
 
     const currentText = document.getElementById('level-indicator') ? document.getElementById('level-indicator').textContent : "1-1";
     
-    // NOTE: Added 'text-amber-400 font-bold' back to the span
     elements.levelSelectBtn.innerHTML = `<span>Chapter <span id="level-indicator" class="text-amber-400 font-bold">${currentText}</span></span> <i data-lucide="map" class="w-3 h-3 ml-2"></i>`;
     elements.levelSelectBtn.classList.remove('opacity-50', 'cursor-not-allowed');
     elements.levelSelectBtn.classList.add('hover:bg-slate-700', 'cursor-pointer');
