@@ -1,45 +1,61 @@
-# JS Quest: Code & Combat
+# JS Quest: Chronicles of the Arcane Mage
 
-Welcome to JS Quest! This is a web-based "Code & Combat" game where you battle a monster by writing JavaScript spells.
+Welcome to **JS Quest**! This is a web-based "Code & Combat" game where you battle monsters by writing real JavaScript code to cast spells.
 
-This project is built with HTML, CSS (using TailwindCSS), and modern JavaScript modules.
+This project is built with HTML, CSS (TailwindCSS), and modern JavaScript (ES6 Modules).
 
 ---
 
-##  How to Run (Using Docker)
+## 🎮 Option 1: Quick Start (Recommended)
+**Use this method to play the game immediately on Windows.** No manual installation of Node.js or Docker is required. The launcher handles everything automatically.
 
-This project is fully containerized using Docker. This solves all compatibility issues between operating systems (like macOS and Windows) by building a consistent Arch Linux environment for the project.
+### How to Run
+1.  **Unzip** the project folder.
+2.  Locate the file named **`PLAY_GAME.bat`**.
+3.  **Double-click** it.
+4.  If prompted by Windows (User Account Control) to install tools, click **Yes**.
+    * *The script uses the official Windows Package Manager (WinGet) or portable tools to set up a temporary local server.*
+5.  A black terminal window will appear, and the game will automatically open in your default web browser at `http://localhost:3000`.
+
+**Note:** Please keep the terminal window **OPEN** while playing. Closing it will stop the game server.
+
+---
+
+## 🛠️ Option 2: Developer Mode (Using Docker)
+**Use this method if you want to debug the containerized environment.**
+This project is fully containerized using Docker, building a consistent Arch Linux environment to ensure compatibility across all systems.
 
 ### Prerequisites
+* **[Docker Desktop](https://www.docker.com/products/docker-desktop/)** must be installed and running.
 
-You must have **[Docker Desktop](https://www.docker.com/products/docker-desktop/)** installed and running on your computer.
+### Debugging & Running
+1.  **Open Your Terminal:** Open PowerShell, CMD, or Terminal in this project's main folder (where `Dockerfile` is located).
 
-### Running the Application
-
-1.  **Open Your Terminal:** Open your terminal (PowerShell, CMD, or Terminal) in this project's main folder (the one containing `Dockerfile` and `docker-compose.yml`).
-
-2.  **Start the Docker Container:**
-    Run the following command. The very first time you run this, Docker will download the Arch Linux image, install Node.js, and set up your project. This might take a few minutes.
+2.  **Start the Container:**
+    Run the following command. The first time you run this, Docker will download the Arch Linux image and set up the environment (this may take a few minutes).
 
     ```bash
     docker compose up
     ```
-    * **Note:** This command runs the server in your terminal and shows you live logs. To run it in the background, you can use `docker compose up -d`.
+    * *To run in the background (detached mode), use:* `docker compose up -d`
 
-3.  **View the Game:**
-    Once the build is complete and the server is running, open your web browser and go to:
+3.  **Access the Game:**
+    Once the server is running, open your web browser and go to:
     > **`http://localhost:3000`**
 
-4.  **Stopping the Application:**
-    * If you ran `docker compose up`, just press `Ctrl + C` in your terminal.
-    * If you ran `docker compose up -d`, run this command to stop the container:
-        ```bash
-        docker compose down
-        ```
+4.  **Stopping the Server:**
+    * Press `Ctrl + C` in the terminal.
+    * Or run: `docker compose down`
 
-### Development
+### Live Reloading
+This Docker setup uses **Volumes**. You do not need to restart the container when you change code.
+* **Edit:** Modify `index.html`, `style.css`, or any `.js` file in `src/`.
+* **Refresh:** Simply reload your browser to see changes instantly.
 
-Because of the `volumes` setting in `docker-compose.yml`, you do not need to restart your container after changing code.
+---
 
-* **For HTML, CSS, or JavaScript changes:** Just edit your `index.html`, `style.css`, or `.js` files and **refresh your browser** to see the changes live.
-* **For `package.json` changes:** If you add a new `npm` package, you must rebuild the image by running: `docker compose up --build`
+## 📖 Game Features
+* **20 Levels:** A full campaign across 4 Chapters (Goblins, Cyclops, Bats, Dragon).
+* **Interactive Coding:** Solve coding puzzles to deal damage.
+* **Grimoire:** Built-in documentation to help you learn JavaScript syntax.
+* **Persistent Progress:** Your progress is saved automatically. If you are defeated, you restart at the beginning of the current Chapter.
